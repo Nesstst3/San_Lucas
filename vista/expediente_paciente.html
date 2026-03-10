@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Expediente del Paciente | Clínica San Lucas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header>
+    <div class="logo_clinica">
+        <img src="{{ url_for('static', filename='img/clinica.png') }}" alt="Logo Clínica San Lucas">
+    </div>
+
+    <nav>
+        <a href="{{ url_for('medico.panel_medico') }}">Volver al panel</a>
+        <a href="{{ url_for('auth.logout') }}">Cerrar sesión</a>
+    </nav>
+</header>
+
+<section class="panel-citas-seccion">
+    <div class="panel-citas-contenedor">
+        <h2>Expediente Clínico del Paciente</h2>
+
+        {% if paciente %}
+        <div class="resumen-doctor">
+            <h3>Ficha clínica general</h3>
+            <p><strong>Expediente:</strong> {{ paciente.numero_expediente }}</p>
+            <p><strong>Nombre:</strong> {{ paciente.nombre }} {{ paciente.apellido_paterno }} {{ paciente.apellido_materno }}</p>
+            <p><strong>Sexo:</strong> {{ paciente.sexo }}</p>
+            <p><strong>Teléfono:</strong> {{ paciente.telefono }}</p>
+            <p><strong>Correo:</strong> {{ paciente.correo }}</p>
+            <p><strong>Dirección:</strong> {{ paciente.calle }} #{{ paciente.numero }}, Col. {{ paciente.colonia }}, C.P. {{ paciente.cp }}</p>
+            <hr class="separador-expediente">
+            <div class="grid-expediente">
+                <div><strong>Peso actual:</strong> {{ paciente.peso if paciente.peso else 'N/A' }}</div>
+                <div><strong>Talla actual:</strong> {{ paciente.talla if paciente.talla else 'N/A' }}</div>
+                <div><strong>Presión arterial:</strong> {{ paciente.presion_arterial if paciente.presion_arterial else 'N/A' }}</div>
+                <div><strong>Temperatura:</strong> {{ paciente.temperatura if paciente.temperatura else 'N/A' }}</div>
+                <div><strong>Tipo de sangre:</strong> {{ paciente.sangre if paciente.sangre else 'N/A' }}</div>
+            </div>
+            <p><strong>Alergias:</strong> {{ paciente.alergias if paciente.alergias else 'Sin registro' }}</p>
+            <p><strong>Medicamentos actuales:</strong> {{ paciente.medicamentos_actuales if paciente.medicamentos_actuales else 'Sin registro' }}</p>
+            <p><strong>Antecedentes:</strong> {{ paciente.antecedentes if paciente.antecedentes else 'Sin registro' }}</p>
+        </div>
+        {% endif %}
+
+        <h3 style="color:#1d5fa8; margin-bottom:20px;">Historial de consultas</h3>
+
+        {% if historial %}
+            {% for consulta in historial %}
+            <div class="bloque-expediente">
+                <div class="bloque-expediente-header">
+                    <h3>Consulta {{ loop.index }}</h3>
+                    <span class="folio-expediente">{{ consulta.folio if consulta.folio else 'Sin folio' }}</span>
+                </div>
+
+                <div class="grid-expediente">
+                    <div><strong>Fecha:</strong> {{ consulta.fecha if consulta.fecha else 'Sin fecha' }}</div>
+                    <div><strong>Hora:</strong> {{ consulta.hora if consulta.hora else 'Sin hora' }}</div>
+                    <div>
+                        <strong>Médico:</strong>
+                        {% if consulta.especialidad == "Psicología" %}
+                            Lic.
+                        {% elif consulta.doctor_nombre == "Andrea" or consulta.doctor_nombre == "Laura" %}
+                            Dra.
+                        {% else %}
+                            Dr.
+                        {% endif %}
+                        {{ consulta.doctor_nombre }} {{ consulta.doctor_apellido_paterno }}
+                    </div>
+                    <div><strong>Especialidad:</strong> {{ consulta.especialidad if consulta.especialidad else 'Sin especialidad' }}</div>
+                    <div class="expediente-col-span"><strong>Motivo:</strong> {{ consulta.motivo if consulta.motivo else 'Sin motivo' }}</div>
+                    <div class="expediente-col-span"><strong>Diagnóstico:</strong> {{ consulta.diagnostico if consulta.diagnostico else 'Sin registro' }}</div>
+                    <div class="expediente-col-span"><strong>Tratamiento:</strong> {{ consulta.tratamiento if consulta.tratamiento else 'Sin registro' }}</div>
+                    <div class="expediente-col-span"><strong>Observaciones:</strong> {{ consulta.observaciones if consulta.observaciones else 'Sin registro' }}</div>
+                </div>
+
+                {% if consulta.especialidad == "Obstetricia" %}
+                <hr class="separador-expediente">
+                <div class="bloque-texto-expediente">
+                    <p><strong>Semanas de gestación:</strong> {{ consulta.semanas_gestacion if consulta.semanas_gestacion else 'N/A' }}</p>
+                    <p><strong>FUM:</strong> {{ consulta.fum if consulta.fum else 'N/A' }}</p>
+                    <p><strong>Gestas:</strong> {{ consulta.gestas if consulta.gestas else 'N/A' }}</p>
+                    <p><strong>Partos:</strong> {{ consulta.partos if consulta.partos else 'N/A' }}</p>
+                    <p><strong>Cesáreas:</strong> {{ consulta.cesareas if consulta.cesareas else 'N/A' }}</p>
+                    <p><strong>Abortos:</strong> {{ consulta.abortos if consulta.abortos else 'N/A' }}</p>
+                    <p><strong>Frecuencia cardíaca fetal:</strong> {{ consulta.frecuencia_cardiaca_fetal if consulta.frecuencia_cardiaca_fetal else 'N/A' }}</p>
+                    <p><strong>Movimientos fetales:</strong> {{ consulta.movimientos_fetales if consulta.movimientos_fetales else 'N/A' }}</p>
+                    <p><strong>Observaciones obstétricas:</strong> {{ consulta.observaciones_obstetricia if consulta.observaciones_obstetricia else 'N/A' }}</p>
+                </div>
+                {% endif %}
+
+                {% if consulta.especialidad == "Dermatología" %}
+                <hr class="separador-expediente">
+                <div class="bloque-texto-expediente">
+                    <p><strong>Tipo de lesión:</strong> {{ consulta.tipo_lesion if consulta.tipo_lesion else 'N/A' }}</p>
+                    <p><strong>Ubicación de la lesión:</strong> {{ consulta.ubicacion_lesion if consulta.ubicacion_lesion else 'N/A' }}</p>
+                    <p><strong>Tiempo de evolución:</strong> {{ consulta.tiempo_evolucion if consulta.tiempo_evolucion else 'N/A' }}</p>
+                    <p><strong>Síntomas asociados:</strong> {{ consulta.sintomas_asociados if consulta.sintomas_asociados else 'N/A' }}</p>
+                    <p><strong>Tratamiento tópico:</strong> {{ consulta.tratamiento_topico if consulta.tratamiento_topico else 'N/A' }}</p>
+                    <p><strong>Observaciones dermatológicas:</strong> {{ consulta.observaciones_dermatologia if consulta.observaciones_dermatologia else 'N/A' }}</p>
+                </div>
+                {% endif %}
+
+                {% if consulta.especialidad == "Nutrición" %}
+                <hr class="separador-expediente">
+                <div class="bloque-texto-expediente">
+                    <p><strong>IMC:</strong> {{ consulta.imc if consulta.imc else 'N/A' }}</p>
+                    <p><strong>Hábitos alimenticios:</strong> {{ consulta.habitos_alimenticios if consulta.habitos_alimenticios else 'N/A' }}</p>
+                    <p><strong>Consumo de agua:</strong> {{ consulta.consumo_agua if consulta.consumo_agua else 'N/A' }}</p>
+                    <p><strong>Objetivo nutricional:</strong> {{ consulta.objetivo_nutricional if consulta.objetivo_nutricional else 'N/A' }}</p>
+                    <p><strong>Plan alimenticio:</strong> {{ consulta.plan_alimenticio if consulta.plan_alimenticio else 'N/A' }}</p>
+                    <p><strong>Observaciones nutricionales:</strong> {{ consulta.observaciones_nutricion if consulta.observaciones_nutricion else 'N/A' }}</p>
+                </div>
+                {% endif %}
+
+                {% if consulta.especialidad == "Psicología" %}
+                <hr class="separador-expediente">
+                <div class="bloque-texto-expediente">
+                    <p><strong>Motivo psicológico:</strong> {{ consulta.motivo_psicologico if consulta.motivo_psicologico else 'N/A' }}</p>
+                    <p><strong>Estado emocional:</strong> {{ consulta.estado_emocional if consulta.estado_emocional else 'N/A' }}</p>
+                    <p><strong>Evaluación mental:</strong> {{ consulta.evaluacion_mental if consulta.evaluacion_mental else 'N/A' }}</p>
+                    <p><strong>Plan terapéutico:</strong> {{ consulta.plan_terapeutico if consulta.plan_terapeutico else 'N/A' }}</p>
+                    <p><strong>Observaciones psicológicas:</strong> {{ consulta.observaciones_psicologia if consulta.observaciones_psicologia else 'N/A' }}</p>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="mensaje-exito">
+            Este paciente aún no tiene consultas registradas en su expediente.
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+</body>
+</html>

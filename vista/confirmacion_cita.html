@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmación de Cita | Clínica San Lucas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <section class="confirmacion-seccion">
+        <div class="confirmacion-contenedor">
+
+            <div class="confirmacion-encabezado">
+                <img src="{{ url_for('static', filename='img/clinica.png') }}" alt="Logo Clínica San Lucas">
+                <h1>Clínica San Lucas</h1>
+                <p>Confirmación de Cita Médica</p>
+            </div>
+
+            <div class="folio-cita">
+                Folio de cita: <strong>{{ cita.folio }}</strong>
+            </div>
+
+            <div class="bloque-confirmacion">
+                <h2>Datos del paciente</h2>
+                <p><strong>Número de expediente:</strong> {{ cita.numero_expediente }}</p>
+                <p><strong>Nombre:</strong> {{ cita.nombre }} {{ cita.apellido_paterno }} {{ cita.apellido_materno }}</p>
+                <p><strong>Sexo:</strong> {{ cita.sexo }}</p>
+                <p><strong>Teléfono:</strong> {{ cita.telefono }}</p>
+                <p><strong>Correo:</strong> {{ cita.correo }}</p>
+                <p><strong>Dirección:</strong> {{ cita.calle }} #{{ cita.numero }}, Col. {{ cita.colonia }}, C.P. {{ cita.cp }}</p>
+            </div>
+
+            <div class="bloque-confirmacion">
+    <h2>Datos de la cita</h2>
+    <p><strong>Especialidad:</strong> {{ cita.especialidad }}</p>
+    <p><strong>Médico:</strong> {{ cita.medico }}</p>
+    <p><strong>Fecha:</strong> {{ cita.fecha }}</p>
+    <p><strong>Hora:</strong> {{ cita.hora }}</p>
+    <p><strong>Motivo:</strong> {{ cita.motivo }}</p>
+
+    <h2 style="margin-top: 18px;">Contacto de la clínica</h2>
+    <p><strong>Teléfono:</strong> 664 614 54 69</p>
+    <p><strong>Correo:</strong> clinicasanlucas01@gmail.com</p>
+    <p><strong>Dirección:</strong> Av. Paseo de los Héroes 10999, Zona Río, Tijuana, B.C., C.P. 22010</p>
+</div>
+
+            <div class="acciones-confirmacion">
+                <button onclick="window.print()" class="btn-imprimir">Imprimir comprobante</button>
+                <a href="{{ url_for('home.inicio') }}" class="btn-volver">Volver al inicio</a>
+            </div>
+
+        </div>
+    </section>
+
+</body>
+</html>

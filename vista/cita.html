@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Agendar Cita | Clínica San Lucas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header>
+        <div class="logo_clinica">
+            <img src="{{ url_for('static', filename='img/clinica.png') }}" alt="Logo Clínica San Lucas">
+        </div>
+
+        <nav>
+            <a href="{{ url_for('home.inicio') }}">Inicio</a>
+            <a href="{{ url_for('home.inicio') }}#especialidades">Especialidades</a>
+            <a href="{{ url_for('home.inicio') }}#doctores">Doctores</a>
+        </nav>
+    </header>
+
+    <section class="formulario-cita-seccion">
+        <div class="formulario-cita-contenedor">
+            <h2>Agenda tu Cita</h2>
+            <p class="subtitulo-formulario">
+                Completa el siguiente formulario para solicitar tu cita médica.
+            </p>
+
+            {% if mensaje %}
+                <div class="mensaje-exito">
+                    {{ mensaje }}
+                </div>
+            {% endif %}
+
+            <form method="POST" class="formulario-cita">
+
+    <div class="seccion-formulario">
+        <h3 class="titulo-seccion-formulario">Datos personales</h3>
+
+        <div class="grupo-campo">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" required>
+        </div>
+
+        <div class="grupo-campo">
+            <label for="apellido_paterno">Apellido paterno</label>
+            <input type="text" id="apellido_paterno" name="apellido_paterno" required>
+        </div>
+
+        <div class="grupo-campo">
+            <label for="apellido_materno">Apellido materno</label>
+            <input type="text" id="apellido_materno" name="apellido_materno" required>
+        </div>
+
+        <div class="grupo-campo">
+            <label for="sexo">Sexo</label>
+            <select id="sexo" name="sexo" required>
+                <option value="">Selecciona una opción</option>
+                <option value="Femenino">Femenino</option>
+                <option value="Masculino">Masculino</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="seccion-formulario">
+        <h3 class="titulo-seccion-formulario">Dirección</h3>
+
+        <div class="grupo-campo">
+            <label for="calle">Calle</label>
+            <input type="text" id="calle" name="calle" required>
+        </div>
+
+        <div class="grupo-campo">
+            <label for="numero">Número</label>
+            <input type="text" id="numero" name="numero" required>
+        </div>
+
+        <div class="grupo-campo">
+            <label for="colonia">Colonia</label>
+            <input type="text" id="colonia" name="colonia" required>
+        </div>
+
+        <div class="grupo-campo">
+            <label for="cp">Código postal</label>
+            <input type="text" id="cp" name="cp" required>
+        </div>
+    </div>
+
+    <div class="seccion-formulario">
+        <h3 class="titulo-seccion-formulario">Datos de contacto</h3>
+
+        <div class="grupo-campo">
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" name="telefono" required>
+        </div>
+
+        <div class="grupo-campo">
+            <label for="correo">Correo electrónico</label>
+            <input type="email" id="correo" name="correo" required>
+        </div>
+    </div>
+
+    <div class="seccion-formulario">
+        <h3 class="titulo-seccion-formulario">Datos de la cita</h3>
+
+<div class="grupo-campo">
+    <label for="especialidad">Especialidad</label>
+    <select id="especialidad" name="especialidad" required>
+        <option value="">Selecciona una especialidad</option>
+        {% for esp in especialidades %}
+        <option value="{{ esp.nombre }}">{{ esp.nombre }}</option>
+        {% endfor %}
+    </select>
+</div>
+
+<div class="grupo-campo">
+    <label for="medico">Médico</label>
+    <select id="medico" name="medico" required>
+        <option value="">Selecciona un médico</option>
+        {% for doc in doctores %}
+            {% if doc.especialidad == "Psicología" %}
+                {% set prefijo = "Lic." %}
+            {% elif doc.nombre == "Andrea" or doc.nombre == "Laura" %}
+                {% set prefijo = "Dra." %}
+            {% else %}
+                {% set prefijo = "Dr." %}
+            {% endif %}
+
+            <option value="{{ prefijo }} {{ doc.nombre }} {{ doc.apellido_paterno }}">
+                {{ prefijo }} {{ doc.nombre }} {{ doc.apellido_paterno }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+        <div class="grupo-campo">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha" name="fecha" required>
+        </div>
+
+       <div class="grupo-campo">
+            <label for="hora">Hora</label>
+            <select id="hora" name="hora" required>
+                <option value="">Selecciona una hora</option>
+            </select>
+        </div>
+
+        <div class="grupo-campo grupo-campo-completo">
+            <label for="motivo">Motivo de la consulta</label>
+            <textarea id="motivo" name="motivo" rows="4" required></textarea>
+        </div>
+    </div>
+
+    <div class="grupo-campo grupo-campo-completo">
+        <button type="submit" class="btn-enviar-cita">Confirmar Cita</button>
+    </div>
+
+</form>
+        </div>
+    </section>
+
+<!--Bloque de horas y de fecha y seleccion de medico y especialidad-->
+<script>
+    const especialidadSelect = document.getElementById("especialidad");
+    const medicoSelect = document.getElementById("medico");
+    const fechaSelect = document.getElementById("fecha");
+    const horaSelect = document.getElementById("hora");
+
+    const doctores = [
+        {% for doc in doctores %}
+        {
+            nombre: "{{ doc.nombre }}",
+            apellido_paterno: "{{ doc.apellido_paterno }}",
+            especialidad: "{{ doc.especialidad }}",
+            prefijo: "{% if doc.especialidad == 'Psicología' %}Lic.{% elif doc.nombre == 'Andrea' or doc.nombre == 'Laura' %}Dra.{% else %}Dr.{% endif %}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const relacionEspecialidadMedico = {};
+    const relacionMedicoEspecialidad = {};
+
+    doctores.forEach(doc => {
+        const nombreCompleto = `${doc.prefijo} ${doc.nombre} ${doc.apellido_paterno}`;
+        relacionEspecialidadMedico[doc.especialidad] = nombreCompleto;
+        relacionMedicoEspecialidad[nombreCompleto] = doc.especialidad;
+    });
+
+    especialidadSelect.addEventListener("change", function () {
+        const especialidadSeleccionada = this.value;
+
+        if (relacionEspecialidadMedico[especialidadSeleccionada]) {
+            medicoSelect.value = relacionEspecialidadMedico[especialidadSeleccionada];
+            cargarHorarios();
+        } else {
+            medicoSelect.value = "";
+            limpiarHoras();
+        }
+    });
+
+    medicoSelect.addEventListener("change", function () {
+        const medicoSeleccionado = this.value;
+
+        if (relacionMedicoEspecialidad[medicoSeleccionado]) {
+            especialidadSelect.value = relacionMedicoEspecialidad[medicoSeleccionado];
+            cargarHorarios();
+        } else {
+            especialidadSelect.value = "";
+            limpiarHoras();
+        }
+    });
+
+    fechaSelect.addEventListener("change", cargarHorarios);
+
+    function limpiarHoras() {
+        horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+    }
+
+    function cargarHorarios() {
+        const medico = medicoSelect.value;
+        const fecha = fechaSelect.value;
+
+        if (!medico || !fecha) {
+            limpiarHoras();
+            return;
+        }
+
+        fetch(`/horarios_disponibles?medico=${encodeURIComponent(medico)}&fecha=${encodeURIComponent(fecha)}`)
+            .then(response => response.json())
+            .then(horas => {
+                limpiarHoras();
+
+                if (horas.length === 0) {
+                    horaSelect.innerHTML = '<option value="">No hay horarios disponibles</option>';
+                    return;
+                }
+
+                horas.forEach(hora => {
+                    const option = document.createElement("option");
+                    option.value = hora;
+                    option.textContent = hora;
+                    horaSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar horarios:", error);
+                limpiarHoras();
+            });
+    }
+</script>
+</body>
+</html>
