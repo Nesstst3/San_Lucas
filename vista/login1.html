@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | CuidarT</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<section class="formulario-cita-seccion">
+    <div class="formulario-cita-contenedor" style="max-width: 500px;">
+        <h2>Ingreso al sistema</h2>
+        <p class="subtitulo-formulario">
+            Accede al panel médico o al área de recepción.
+        </p>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje-exito">
+                        {{ mensaje }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('auth.login') }}" class="formulario-cita">
+            <div class="grupo-campo grupo-campo-completo">
+                <label for="correo">Correo</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+
+            <div class="grupo-campo grupo-campo-completo">
+                <label for="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+            </div>
+
+            <div class="grupo-campo grupo-campo-completo">
+                <button type="submit" class="btn-enviar-cita">Entrar</button>
+            </div>
+        </form>
+
+        <div style="text-align: center; margin-top: 15px;">
+            <a href="{{ url_for('auth.recuperar_password') }}">¿Olvidaste tu contraseña?</a>
+        </div>
+
+        <div style="text-align: center; margin-top: 10px;">
+            <a href="{{ url_for('home.inicio') }}">Volver al inicio</a>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

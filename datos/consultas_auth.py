@@ -6,7 +6,7 @@ def autenticar_usuario(correo, contrasena):
     cursor = conexion.cursor(dictionary=True)
 
     sql = """
-        SELECT id_usuario, correo, rol, id_doctor
+        SELECT id_usuario, correo, rol, id_doctor, activo
         FROM usuarios
         WHERE correo = %s AND contrasena = %s AND activo = 1
         LIMIT 1

@@ -26,7 +26,7 @@ HORARIOS_DISPONIBLES = [
 
 def enviar_correo_confirmacion(destinatario, cita_info):
     correo_emisor = "clinicasanlucas01@gmail.com"
-    contrasena = "AQUI_TU_CLAVE"
+    contrasena = "xqpjavrjobshwzoi"
 
     asunto = f"Confirmación de cita - Clínica San Lucas - Folio {cita_info['folio']}"
 

@@ -13,17 +13,62 @@ def acceso_medico():
     return session.get("rol") == "medico"
 
 
-@medico.route("/panel_medico")
-def panel_medico():
+def obtener_id_medico_sesion():
+    """
+    Toma el id del médico desde la sesión.
+    Soporta ambos nombres por si en auth guardaste:
+    - id_doctor
+    - id_usuario
+    """
+    return session.get("id_doctor") or session.get("id_usuario")
+
+
+@medico.route("/dashboard")
+def dashboard():
     if not acceso_medico():
         return redirect(url_for("auth.login"))
 
-    id_doctor = session.get("id_doctor")
-    filtro = request.args.get("filtro", default="proximas")
+    id_doctor = obtener_id_medico_sesion()
+    if not id_doctor:
+        return redirect(url_for("auth.login"))
 
+    citas = obtener_citas_del_medico(id_doctor, "proximas")
+
+    return render_template(
+        "dashboard.html",
+        citas=citas,
+        nombre=session.get("nombre", "Doctor"),
+        filtro="proximas"
+    )
+
+
+@medico.route("/agenda")
+def agenda():
+    if not acceso_medico():
+        return redirect(url_for("auth.login"))
+
+    id_doctor = obtener_id_medico_sesion()
+    if not id_doctor:
+        return redirect(url_for("auth.login"))
+
+    filtro = request.args.get("filtro", default="proximas")
     citas = obtener_citas_del_medico(id_doctor, filtro)
 
-    return render_template("panel_medico.html", citas=citas, filtro=filtro)
+    return render_template(
+        "agenda.html",
+        citas=citas,
+        filtro=filtro,
+        nombre=session.get("nombre", "Doctor")
+    )
+
+
+@medico.route("/panel_medico")
+def panel_medico():
+    """
+    Ruta de compatibilidad por si todavía tienes links viejos.
+    Ahora redirige al nuevo dashboard.
+    """
+    return redirect(url_for("medico.dashboard"))
 
 
 @medico.route("/detalle_cita/<int:id_cita>", methods=["GET", "POST"])
@@ -31,11 +76,14 @@ def detalle_cita(id_cita):
     if not acceso_medico():
         return redirect(url_for("auth.login"))
 
-    id_doctor = session.get("id_doctor")
+    id_doctor = obtener_id_medico_sesion()
+    if not id_doctor:
+        return redirect(url_for("auth.login"))
+
     cita = obtener_detalle_cita(id_cita, id_doctor)
 
     if not cita:
-        return redirect(url_for("medico.panel_medico"))
+        return redirect(url_for("medico.agenda"))
 
     if request.method == "POST":
         datos_generales = {
@@ -56,6 +104,7 @@ def detalle_cita(id_cita):
         }
 
         datos_especialidad = {
+            # Obstetricia
             "semanas_gestacion": request.form.get("semanas_gestacion"),
             "fum": request.form.get("fum"),
             "gestas": request.form.get("gestas"),
@@ -66,6 +115,7 @@ def detalle_cita(id_cita):
             "movimientos_fetales": request.form.get("movimientos_fetales"),
             "observaciones_obstetricia": request.form.get("observaciones_obstetricia"),
 
+            # Dermatología
             "tipo_lesion": request.form.get("tipo_lesion"),
             "ubicacion_lesion": request.form.get("ubicacion_lesion"),
             "tiempo_evolucion": request.form.get("tiempo_evolucion"),
@@ -73,6 +123,7 @@ def detalle_cita(id_cita):
             "tratamiento_topico": request.form.get("tratamiento_topico"),
             "observaciones_dermatologia": request.form.get("observaciones_dermatologia"),
 
+            # Nutrición
             "imc": request.form.get("imc"),
             "habitos_alimenticios": request.form.get("habitos_alimenticios"),
             "consumo_agua": request.form.get("consumo_agua"),
@@ -80,6 +131,7 @@ def detalle_cita(id_cita):
             "plan_alimenticio": request.form.get("plan_alimenticio"),
             "observaciones_nutricion": request.form.get("observaciones_nutricion"),
 
+            # Psicología
             "motivo_psicologico": request.form.get("motivo_psicologico"),
             "estado_emocional": request.form.get("estado_emocional"),
             "evaluacion_mental": request.form.get("evaluacion_mental"),
@@ -89,7 +141,9 @@ def detalle_cita(id_cita):
 
         guardar_consulta_completa(cita, datos_generales, datos_consulta, datos_especialidad)
 
-        return redirect(url_for("medico.expediente_paciente", id_paciente=cita["id_paciente"]))
+        return redirect(
+            url_for("medico.expediente_paciente", id_paciente=cita["id_paciente"])
+        )
 
     return render_template("detalle_cita.html", cita=cita)
 

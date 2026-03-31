@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+<meta charset="UTF-8">
+<title>Agenda Médica</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+background:#f4f7fb;
+font-family:'Inter',sans-serif;
+}
+
+.agenda-container{
+padding:35px;
+}
+
+.agenda-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.agenda-title{
+font-size:1.6rem;
+font-weight:700;
+color:#2c3e50;
+}
+
+.card-soft{
+border:none;
+border-radius:18px;
+background:white;
+box-shadow:0 10px 35px rgba(0,0,0,0.07);
+}
+
+.calendar-card{
+padding:20px;
+}
+
+.legend-card{
+padding:25px;
+}
+
+.legend-title{
+font-weight:600;
+margin-bottom:15px;
+font-size:1.05rem;
+}
+
+.legend-item{
+display:flex;
+align-items:center;
+margin-bottom:12px;
+font-size:0.95rem;
+}
+
+.legend-color{
+width:15px;
+height:15px;
+border-radius:4px;
+margin-right:10px;
+}
+
+.filter-btn{
+width:100%;
+margin-top:10px;
+}
+
+.fc-toolbar-title{
+font-weight:600;
+}
+
+.fc-button{
+border-radius:8px !important;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container-fluid agenda-container">
+
+<div class="agenda-header">
+
+<div class="agenda-title">
+<i class="bi bi-calendar2-week me-2"></i>
+Agenda Médica
+</div>
+
+<div class="btn-group shadow-sm" role="group">
+
+<button id="btnTodas" class="btn btn-primary active" onclick="verTodas()">
+<i class="bi bi-people"></i>
+Todas
+</button>
+
+<button id="btnMias" class="btn btn-outline-primary" onclick="verMias()">
+<i class="bi bi-person"></i>
+Mis citas
+</button>
+
+</div>
+
+</div>
+
+
+<div class="row g-4">
+
+<div class="col-lg-9">
+
+<div class="card card-soft calendar-card">
+
+<div id="calendar"></div>
+
+</div>
+
+</div>
+
+
+<div class="col-lg-3">
+
+<div class="card card-soft legend-card">
+
+<div class="legend-title">Doctores</div>
+
+<div class="legend-item">
+<div class="legend-color" style="background:#27ae60"></div>
+Dr. Eduardo — Nutriología
+</div>
+
+<div class="legend-item">
+<div class="legend-color" style="background:#2f80ed"></div>
+Psicología
+</div>
+
+<div class="legend-item">
+<div class="legend-color" style="background:#9b51e0"></div>
+Obstetricia
+</div>
+
+<div class="legend-item">
+<div class="legend-color" style="background:#f2994a"></div>
+Dermatología
+</div>
+
+<hr>
+
+<button class="btn btn-outline-secondary filter-btn" onclick="verTodas()">
+Ver todas las citas
+</button>
+
+<button class="btn btn-primary filter-btn" onclick="verMias()">
+Ver solo mis citas
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let calendar;
+let todasLasCitas=[];
+
+document.addEventListener('DOMContentLoaded', function() {
+
+const calendarEl=document.getElementById('calendar');
+
+calendar=new FullCalendar.Calendar(calendarEl,{
+
+initialView:'timeGridWeek',
+
+locale:'es',
+
+slotMinTime:"08:00:00",
+slotMaxTime:"20:00:00",
+
+headerToolbar:{
+left:'prev,next today',
+center:'title',
+right:'dayGridMonth,timeGridWeek,timeGridDay'
+},
+
+events:'/api/citas'
+
+});
+
+calendar.render();
+
+fetch('/api/citas')
+.then(res=>res.json())
+.then(data=>{
+todasLasCitas=data
+})
+
+});
+
+
+function activarBoton(btn){
+
+document.getElementById("btnTodas").classList.remove("active","btn-primary")
+document.getElementById("btnMias").classList.remove("active","btn-primary")
+
+document.getElementById("btnTodas").classList.add("btn-outline-primary")
+document.getElementById("btnMias").classList.add("btn-outline-primary")
+
+btn.classList.remove("btn-outline-primary")
+btn.classList.add("btn-primary","active")
+
+}
+
+
+function verTodas(){
+
+activarBoton(document.getElementById("btnTodas"))
+
+calendar.removeAllEvents()
+
+todasLasCitas.forEach(c=>calendar.addEvent(c))
+
+}
+
+
+function verMias(){
+
+activarBoton(document.getElementById("btnMias"))
+
+const doctor="{{ doctor }}"
+
+calendar.removeAllEvents()
+
+todasLasCitas
+.filter(c=>c.doctor===doctor)
+.forEach(c=>calendar.addEvent(c))
+
+}
+
+</script>
+
+</body>
+</html>
