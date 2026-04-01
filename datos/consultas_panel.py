@@ -119,8 +119,6 @@ def obtener_citas_por_doctor_y_filtro(id_doctor, filtro):
 
     return citas
 
-from datos.conexion import obtener_conexion
-
 def obtener_citas_calendario():
     conexion = obtener_conexion()
     cursor = conexion.cursor(dictionary=True)
@@ -153,3 +151,61 @@ def obtener_citas_calendario():
     conexion.close()
 
     return citas
+
+def obtener_pacientes_panel_recepcion(busqueda=""):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    query = """
+        SELECT
+            p.id_paciente,
+            p.numero_expediente,
+            p.nombre,
+            p.apellido_paterno,
+            p.apellido_materno,
+            p.correo,
+            COUNT(c.id_cita) AS total_citas,
+            CASE
+                WHEN COUNT(c.id_cita) = 1 THEN 'Prospecto'
+                WHEN COUNT(c.id_cita) >= 2 THEN 'Paciente recurrente'
+                ELSE 'Sin citas'
+            END AS categoria,
+            CASE
+                WHEN cp.id_cuenta_paciente IS NULL THEN 'Sin cuenta'
+                WHEN cp.debe_cambiar_password = 1 THEN 'Pendiente de cambio'
+                ELSE 'Cuenta activa'
+            END AS estado_cuenta
+        FROM pacientes p
+        LEFT JOIN citas c
+            ON p.id_paciente = c.id_paciente
+        LEFT JOIN cuentas_paciente cp
+            ON p.id_paciente = cp.id_paciente
+        WHERE (
+            %s = ''
+            OR p.numero_expediente LIKE %s
+            OR p.nombre LIKE %s
+            OR p.apellido_paterno LIKE %s
+            OR p.apellido_materno LIKE %s
+            OR p.correo LIKE %s
+        )
+        GROUP BY
+            p.id_paciente,
+            p.numero_expediente,
+            p.nombre,
+            p.apellido_paterno,
+            p.apellido_materno,
+            p.correo,
+            cp.id_cuenta_paciente,
+            cp.debe_cambiar_password
+        HAVING COUNT(c.id_cita) >= 1
+        ORDER BY total_citas DESC, p.nombre ASC, p.apellido_paterno ASC
+    """
+
+    like = f"%{busqueda}%"
+    cursor.execute(query, (busqueda, like, like, like, like, like))
+    resultados = cursor.fetchall()
+
+    cursor.close()
+    conexion.close()
+
+    return resultados

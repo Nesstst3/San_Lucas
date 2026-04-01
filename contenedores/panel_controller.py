@@ -1,30 +1,27 @@
 from flask import Blueprint, render_template, request
-from datos.consultas_panel import obtener_doctores_panel, obtener_citas_por_doctor_y_filtro
+from datos.consultas_panel import (
+    obtener_doctores_panel,
+    obtener_pacientes_panel_recepcion
+)
 
 panel = Blueprint("panel", __name__)
 
-@panel.route("/panel_citas", methods=["GET"])
+@panel.route("/panel_citas")
 def panel_citas():
+    q = request.args.get("q", "").strip()
+
     doctores = obtener_doctores_panel()
+    pacientes_panel = obtener_pacientes_panel_recepcion(q)
 
-    id_doctor = request.args.get("id_doctor", type=int)
-    filtro = request.args.get("filtro", default="proximas")
-
-    citas = []
-    doctor_seleccionado = None
-
-    if id_doctor:
-        citas = obtener_citas_por_doctor_y_filtro(id_doctor, filtro)
-        doctor_seleccionado = next(
-            (d for d in doctores if d["id_doctor"] == id_doctor),
-            None
-        )
+    resumen_panel = {
+        "prospectos": sum(1 for p in pacientes_panel if p["total_citas"] == 1),
+        "recurrentes": sum(1 for p in pacientes_panel if p["total_citas"] >= 2),
+        "activas": sum(1 for p in pacientes_panel if p["estado_cuenta"] == "Cuenta activa")
+    }
 
     return render_template(
         "panel_citas.html",
         doctores=doctores,
-        citas=citas,
-        filtro=filtro,
-        id_doctor=id_doctor,
-        doctor_seleccionado=doctor_seleccionado
+        pacientes_panel=pacientes_panel,
+        resumen_panel=resumen_panel
     )

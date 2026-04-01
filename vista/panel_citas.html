@@ -2,8 +2,593 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel de Citas | Clínica San Lucas</title>
+    <title>Panel de recepción | Clínica San Lucas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --primary:#2f80ed;
+            --primary-dark:#1f6fe0;
+            --soft-bg:#eef4fb;
+            --card-bg:rgba(255,255,255,.85);
+            --text:#243447;
+            --muted:#6b7280;
+            --line:#dfe8f5;
+            --shadow:0 18px 38px rgba(31,76,148,.08);
+        }
+
+        *{ box-sizing:border-box; font-family:'Inter',sans-serif; }
+
+        body{
+            margin:0;
+            min-height:100vh;
+            color:var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(86, 204, 242, 0.14), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(47, 128, 237, 0.10), transparent 25%),
+                linear-gradient(180deg, #f7fbff 0%, var(--soft-bg) 100%);
+        }
+
+        header{
+            background:linear-gradient(135deg,#3f8cf0,#2f78da);
+            padding:20px 36px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            box-shadow:0 8px 24px rgba(26,87,173,.16);
+        }
+
+        .logo_clinica img{
+            height:58px;
+            object-fit:contain;
+        }
+
+        nav{
+            display:flex;
+            gap:26px;
+            align-items:center;
+        }
+
+        nav a{
+            color:#fff;
+            text-decoration:none;
+            font-weight:700;
+            font-size:.98rem;
+        }
+
+        .recepcion-page{
+            max-width:1320px;
+            margin:34px auto 60px;
+            padding:0 18px;
+        }
+
+        .recepcion-layout{
+            display:grid;
+            grid-template-columns: 2.2fr .95fr;
+            gap:24px;
+            align-items:start;
+        }
+
+        .recepcion-main{
+            display:flex;
+            flex-direction:column;
+            gap:22px;
+        }
+
+        .resumen-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:16px;
+        }
+
+        .resumen-card{
+            border-radius:26px;
+            padding:24px 24px 22px;
+            color:#fff;
+            box-shadow:var(--shadow);
+            position:relative;
+            overflow:hidden;
+            min-height:146px;
+        }
+
+        .resumen-card::after{
+            content:"";
+            position:absolute;
+            width:120px;
+            height:120px;
+            border-radius:50%;
+            top:-25px;
+            right:-20px;
+            background:rgba(255,255,255,.13);
+        }
+
+        .resumen-blue{ background:linear-gradient(135deg,#2f80ed,#56ccf2); }
+        .resumen-purple{ background:linear-gradient(135deg,#8b74e8,#a78bfa); }
+        .resumen-green{ background:linear-gradient(135deg,#4cbf88,#6ed9a5); }
+
+        .resumen-icon{
+            width:68px;
+            height:68px;
+            border-radius:20px;
+            background:rgba(255,255,255,.18);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:2rem;
+            margin-bottom:16px;
+        }
+
+        .resumen-number{
+            font-size:2.2rem;
+            font-weight:800;
+            line-height:1;
+            margin-bottom:8px;
+        }
+
+        .resumen-title{
+            font-size:1.45rem;
+            font-weight:800;
+            line-height:1.1;
+            margin-bottom:8px;
+        }
+
+        .resumen-sub{
+            font-size:.98rem;
+            opacity:.95;
+            font-weight:500;
+        }
+
+        .card-soft{
+            background:var(--card-bg);
+            backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,.7);
+            border-radius:30px;
+            box-shadow:var(--shadow);
+        }
+
+        .gestion-card{
+            padding:0;
+            overflow:hidden;
+        }
+
+        .gestion-header{
+            padding:28px 28px 18px;
+        }
+
+        .gestion-title{
+            margin:0;
+            font-size:2rem;
+            font-weight:800;
+            color:#1d2b3a;
+        }
+
+        .gestion-tools{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            padding:0 18px 18px;
+            flex-wrap:wrap;
+        }
+
+        .search-box{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            background:#f8fbff;
+            border:1px solid #dceafe;
+            border-radius:18px;
+            padding:14px 18px;
+            min-width:360px;
+            flex:1;
+        }
+
+        .search-box svg,
+        .filter-btn svg{
+            width:22px;
+            height:22px;
+            stroke:#4b87e2;
+            flex-shrink:0;
+        }
+
+        .search-box input{
+            width:100%;
+            border:none;
+            background:transparent;
+            outline:none;
+            font-size:1rem;
+            color:#334155;
+        }
+
+        .tool-actions{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .filter-btn{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            background:#eaf2ff;
+            color:#3578dc;
+            border:1px solid #d4e4ff;
+            border-radius:18px;
+            padding:14px 20px;
+            font-weight:700;
+            font-size:1rem;
+            cursor:pointer;
+        }
+
+        .tool-more{
+            width:44px;
+            height:44px;
+            border:none;
+            border-radius:14px;
+            background:#f5f9ff;
+            color:#4b5563;
+            font-size:1.4rem;
+            cursor:pointer;
+        }
+
+        .tabla-wrap{
+            width:100%;
+            overflow-x:auto;
+            border-top:1px solid #edf3fb;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            min-width:980px;
+        }
+
+        thead th{
+            background:#fafcff;
+            color:#637187;
+            text-align:left;
+            font-size:.96rem;
+            font-weight:800;
+            padding:18px 20px;
+            border-bottom:1px solid #e8eff8;
+        }
+
+        tbody td{
+            padding:18px 20px;
+            border-bottom:1px solid #edf2f8;
+            vertical-align:middle;
+        }
+
+        tbody tr:hover{
+            background:#f9fcff;
+        }
+
+        .expediente-cell{
+            display:flex;
+            align-items:center;
+            gap:14px;
+        }
+
+        .file-icon-box{
+            width:50px;
+            height:50px;
+            border-radius:15px;
+            background:#eef4ff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            flex-shrink:0;
+            font-size:1.45rem;
+            color:#4a86e8;
+        }
+
+        .expediente-num{
+            font-size:1.02rem;
+            font-weight:800;
+            color:#1f2937;
+        }
+
+        .expediente-sub{
+            color:#94a3b8;
+            font-size:.9rem;
+            margin-top:4px;
+        }
+
+        .paciente-name{
+            font-size:1.02rem;
+            font-weight:600;
+            line-height:1.35;
+        }
+
+        .correo-txt{
+            color:#5f6f84;
+            line-height:1.45;
+        }
+
+        .count-badge{
+            font-weight:700;
+            color:#42556e;
+        }
+
+        .status-dot{
+            width:12px;
+            height:12px;
+            border-radius:50%;
+            display:inline-block;
+            margin-right:10px;
+            vertical-align:middle;
+        }
+
+        .dot-yellow{ background:#f2c94c; }
+        .dot-purple{ background:#bb86fc; }
+        .dot-cyan{ background:#4fd1d9; }
+        .dot-green{ background:#6ac36a; }
+
+        .categoria-text,
+        .estado-text{
+            font-weight:600;
+            color:#42556e;
+        }
+
+        .btn-accion{
+            border:none;
+            border-radius:16px;
+            padding:12px 18px;
+            font-weight:800;
+            font-size:.96rem;
+            cursor:pointer;
+            white-space:nowrap;
+        }
+
+        .btn-primary-soft{
+            color:#fff;
+            background:linear-gradient(135deg,#2f80ed,#56a8ff);
+            box-shadow:0 10px 20px rgba(47,128,237,.18);
+        }
+
+        .btn-secondary-soft{
+            color:#46566d;
+            background:#f4f8fd;
+            border:1px solid #d9e4f2;
+        }
+
+        .tabla-footer{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:14px;
+            padding:18px 22px 22px;
+            flex-wrap:wrap;
+        }
+
+        .footer-text{
+            color:#6b7280;
+            font-size:1rem;
+            font-weight:600;
+        }
+
+        .pagination{
+            display:flex;
+            align-items:center;
+            border:1px solid #dbe5f2;
+            border-radius:16px;
+            overflow:hidden;
+            background:#fff;
+        }
+
+        .page-btn,
+        .page-current,
+        .page-total{
+            min-width:46px;
+            height:46px;
+            border:none;
+            background:#fff;
+            color:#64748b;
+            font-size:1rem;
+            font-weight:700;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+        }
+
+        .page-current{
+            background:#4a86e8;
+            color:#fff;
+        }
+
+        .page-total{
+            padding:0 16px;
+            border-left:1px solid #e5edf8;
+            border-right:1px solid #e5edf8;
+        }
+
+        .side-column{
+            display:flex;
+            flex-direction:column;
+            gap:22px;
+        }
+
+        .calendar-card,
+        .panel-doctores-card{
+            padding:28px;
+        }
+
+        .calendar-head{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:18px;
+        }
+
+        .calendar-head h3{
+            margin:0;
+            font-size:1.2rem;
+            font-weight:700;
+            color:#4a5c75;
+        }
+
+        .calendar-arrow{
+            border:none;
+            background:transparent;
+            font-size:1.4rem;
+            color:#93a4bf;
+            cursor:pointer;
+        }
+
+        .calendar-grid{
+            display:grid;
+            grid-template-columns:repeat(7,1fr);
+            gap:10px;
+            text-align:center;
+            color:#55657d;
+        }
+
+        .calendar-day-name{
+            font-weight:700;
+            color:#718198;
+            padding-bottom:8px;
+        }
+
+        .calendar-day{
+            padding:8px 0;
+            border-radius:12px;
+            font-weight:600;
+        }
+
+        .calendar-day.muted{ color:#b2bdcd; }
+
+        .calendar-dots{
+            display:grid;
+            grid-template-columns:repeat(7,1fr);
+            margin-top:8px;
+            text-align:center;
+        }
+
+        .mini-dot{
+            width:12px;
+            height:12px;
+            border-radius:50%;
+            display:inline-block;
+        }
+
+        .mini-yellow{ background:#f2c94c; }
+        .mini-purple{ background:#bb86fc; }
+        .mini-cyan{ background:#4fd1d9; }
+        .mini-green{ background:#6ac36a; }
+
+        .calendar-btn{
+            width:100%;
+            margin-top:22px;
+            border:none;
+            border-radius:18px;
+            padding:16px 18px;
+            background:linear-gradient(135deg,#2f80ed,#356df5);
+            color:#fff;
+            font-size:1.05rem;
+            font-weight:800;
+            cursor:pointer;
+        }
+
+        .panel-doctores-card h3{
+            margin:0 0 20px;
+            font-size:1.2rem;
+            font-weight:800;
+        }
+
+        .doctor-item{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin-bottom:14px;
+            color:#4b5563;
+            font-size:1rem;
+        }
+
+        .doctor-color{
+            width:18px;
+            height:18px;
+            border-radius:5px;
+            display:inline-block;
+            flex-shrink:0;
+        }
+
+        .color-nutriologia{ background:#2dc653; }
+        .color-dermatologia{ background:#f2994a; }
+        .color-obstetricia{ background:#9b51e0; }
+        .color-psicologia{ background:#3b82f6; }
+        .color-default{ background:#94a3b8; }
+
+        .panel-doctores-card hr{
+            border:none;
+            border-top:1px solid #d5dde9;
+            margin:18px 0 16px;
+        }
+
+        .btn-panel-secundario,
+        .btn-panel-primario{
+            display:block;
+            text-align:center;
+            text-decoration:none;
+            border-radius:16px;
+            padding:14px 18px;
+            font-weight:800;
+            font-size:1rem;
+        }
+
+        .btn-panel-secundario{
+            color:#4b5563;
+            border:1px solid #9aa6b6;
+            background:#fff;
+            margin-bottom:14px;
+        }
+
+        .btn-panel-primario{
+            color:#fff;
+            background:linear-gradient(135deg,#2f62ed,#2563eb);
+        }
+
+        .empty-panel{
+            padding:40px 20px;
+            text-align:center;
+            color:#7a8798;
+        }
+
+        @media (max-width: 1100px){
+            .recepcion-layout{
+                grid-template-columns:1fr;
+            }
+
+            .resumen-grid{
+                grid-template-columns:1fr;
+            }
+        }
+
+        @media (max-width: 768px){
+            header{
+                padding:16px 18px;
+                flex-direction:column;
+                gap:14px;
+            }
+
+            nav{
+                gap:14px;
+                flex-wrap:wrap;
+                justify-content:center;
+            }
+
+            .gestion-tools{
+                flex-direction:column;
+                align-items:stretch;
+            }
+
+            .search-box{
+                min-width:100%;
+            }
+        }
+    </style>
 </head>
 <body>
 
@@ -19,162 +604,305 @@
     </nav>
 </header>
 
-<section class="panel-citas-seccion">
-    <div class="panel-citas-layout">
+<section class="recepcion-page">
+    <div class="recepcion-layout">
 
-        <!-- CONTENIDO PRINCIPAL -->
-        <div class="panel-citas-contenedor">
-            <h2>Panel de Citas Registradas</h2>
-            <p class="subtitulo-formulario">
-                Consulta las citas por médico y filtra entre próximas, pasadas o del siguiente mes.
-            </p>
+        <div class="recepcion-main">
 
-            <form method="GET" action="{{ url_for('panel.panel_citas') }}" class="filtros-panel">
-                <div class="grupo-campo">
-                    <label for="id_doctor">Médico</label>
-                    <select name="id_doctor" id="id_doctor" required>
-                        <option value="">Selecciona un médico</option>
+            <div class="resumen-grid">
+                <div class="resumen-card resumen-blue">
+                    <div class="resumen-icon">📁</div>
+                    <div class="resumen-number">{{ resumen_panel.prospectos if resumen_panel is defined else 12 }}</div>
+                    <div class="resumen-title">Prospectos</div>
+                    <div class="resumen-sub">1 cita registrada</div>
+                </div>
+
+                <div class="resumen-card resumen-purple">
+                    <div class="resumen-icon">👥</div>
+                    <div class="resumen-number">{{ resumen_panel.recurrentes if resumen_panel is defined else 28 }}</div>
+                    <div class="resumen-title">Pacientes recurrentes</div>
+                    <div class="resumen-sub">2 o más citas</div>
+                </div>
+
+                <div class="resumen-card resumen-green">
+                    <div class="resumen-icon">✅</div>
+                    <div class="resumen-number">{{ resumen_panel.activas if resumen_panel is defined else 19 }}</div>
+                    <div class="resumen-title">Cuentas activas</div>
+                    <div class="resumen-sub">Acceso habilitado</div>
+                </div>
+            </div>
+
+            <div class="gestion-card card-soft">
+                <div class="gestion-header">
+                    <h2 class="gestion-title">Gestión de Cuentas de Pacientes</h2>
+                </div>
+
+                <form method="GET" action="{{ url_for('panel.panel_citas') }}" class="gestion-tools">
+                    <div class="search-box">
+                        <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <path d="M20 20l-3.5-3.5"></path>
+                        </svg>
+                        <input type="text" name="q" placeholder="Buscar paciente..." value="{{ request.args.get('q', '') }}">
+                    </div>
+
+                    <div class="tool-actions">
+                        <button type="submit" class="filter-btn">
+                            <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
+                                <path d="M4 5h16l-6 7v6l-4 2v-8L4 5z"></path>
+                            </svg>
+                            Filtrar
+                        </button>
+
+                        <button type="button" class="tool-more">⋮</button>
+                    </div>
+                </form>
+
+                <div class="tabla-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Expediente</th>
+                                <th>Paciente</th>
+                                <th>Correo</th>
+                                <th>Total de citas</th>
+                                <th>Categoría</th>
+                                <th>Estado de cuenta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            {% if pacientes_panel is defined and pacientes_panel %}
+                                {% for paciente in pacientes_panel %}
+                                <tr>
+                                    <td>
+                                        <div class="expediente-cell">
+                                            <div class="file-icon-box">📂</div>
+                                            <div>
+                                                <div class="expediente-num">{{ paciente.numero_expediente }}</div>
+                                                <div class="expediente-sub">{{ paciente.numero_expediente }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="paciente-name">
+                                            {{ paciente.nombre }} {{ paciente.apellido_paterno }} {{ paciente.apellido_materno }}
+                                        </div>
+                                    </td>
+
+                                    <td><div class="correo-txt">{{ paciente.correo }}</div></td>
+                                    <td><span class="count-badge">{{ paciente.total_citas }} cita(s)</span></td>
+
+                                    <td>
+                                        <span class="status-dot {% if paciente.categoria == 'Prospecto' %}dot-yellow{% else %}dot-purple{% endif %}"></span>
+                                        <span class="categoria-text">{{ paciente.categoria }}</span>
+                                    </td>
+
+                                    <td>
+                                        {% if paciente.estado_cuenta == 'Sin cuenta' %}
+                                            <button type="button" class="btn-accion btn-primary-soft">Activar cuenta</button>
+                                        {% elif paciente.estado_cuenta == 'Pendiente de cambio' %}
+                                            <button type="button" class="btn-accion btn-secondary-soft">Reenviar acceso</button>
+                                        {% else %}
+                                            <button type="button" class="btn-accion btn-secondary-soft">Ver cuenta</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                            {% elif citas %}
+                                {% for cita in citas %}
+                                <tr>
+                                    <td>
+                                        <div class="expediente-cell">
+                                            <div class="file-icon-box">📂</div>
+                                            <div>
+                                                <div class="expediente-num">{{ cita.numero_expediente }}</div>
+                                                <div class="expediente-sub">{{ cita.numero_expediente }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <div class="paciente-name">
+                                            {{ cita.nombre }} {{ cita.apellido_paterno }} {{ cita.apellido_materno }}
+                                        </div>
+                                    </td>
+
+                                    <td><div class="correo-txt">{{ cita.correo if cita.correo is defined else 'Sin correo' }}</div></td>
+                                    <td><span class="count-badge">1 cita</span></td>
+                                    <td>
+                                        <span class="status-dot dot-yellow"></span>
+                                        <span class="categoria-text">Prospecto</span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn-accion btn-primary-soft">Activar cuenta</button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="empty-panel">
+                                            No hay pacientes disponibles para mostrar en este panel.
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="tabla-footer">
+                    <div class="footer-text">
+                        Mostrando
+                        {% if pacientes_panel is defined and pacientes_panel %}
+                            {{ pacientes_panel|length }}
+                        {% elif citas %}
+                            {{ citas|length }}
+                        {% else %}
+                            0
+                        {% endif %}
+                        pacientes
+                    </div>
+
+                    <div class="pagination">
+                        <button class="page-btn" type="button">‹</button>
+                        <div class="page-current">1</div>
+                        <div class="page-total">de 1</div>
+                        <button class="page-btn" type="button">›</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <aside class="side-column">
+
+            <div class="calendar-card card-soft">
+                <div class="calendar-head">
+                    <button class="calendar-arrow" type="button">←</button>
+                    <h3>abril 2024</h3>
+                    <button class="calendar-arrow" type="button">→</button>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="calendar-day-name">L</div>
+                    <div class="calendar-day-name">M</div>
+                    <div class="calendar-day-name">M</div>
+                    <div class="calendar-day-name">J</div>
+                    <div class="calendar-day-name">V</div>
+                    <div class="calendar-day-name">S</div>
+                    <div class="calendar-day-name">D</div>
+
+                    <div class="calendar-day">1</div>
+                    <div class="calendar-day">2</div>
+                    <div class="calendar-day">3</div>
+                    <div class="calendar-day">4</div>
+                    <div class="calendar-day">5</div>
+                    <div class="calendar-day">6</div>
+                    <div class="calendar-day">7</div>
+
+                    <div class="calendar-day">8</div>
+                    <div class="calendar-day">9</div>
+                    <div class="calendar-day">10</div>
+                    <div class="calendar-day">11</div>
+                    <div class="calendar-day">12</div>
+                    <div class="calendar-day">13</div>
+                    <div class="calendar-day">14</div>
+
+                    <div class="calendar-day">15</div>
+                    <div class="calendar-day">16</div>
+                    <div class="calendar-day">17</div>
+                    <div class="calendar-day">18</div>
+                    <div class="calendar-day">19</div>
+                    <div class="calendar-day">20</div>
+                    <div class="calendar-day">21</div>
+
+                    <div class="calendar-day">22</div>
+                    <div class="calendar-day">23</div>
+                    <div class="calendar-day">24</div>
+                    <div class="calendar-day">25</div>
+                    <div class="calendar-day">26</div>
+                    <div class="calendar-day">27</div>
+                    <div class="calendar-day">28</div>
+
+                    <div class="calendar-day">29</div>
+                    <div class="calendar-day">30</div>
+                    <div class="calendar-day muted">31</div>
+                    <div class="calendar-day muted"></div>
+                    <div class="calendar-day muted"></div>
+                    <div class="calendar-day muted"></div>
+                    <div class="calendar-day muted"></div>
+                </div>
+
+                <div class="calendar-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span class="mini-dot mini-yellow"></span>
+                    <span class="mini-dot mini-purple"></span>
+                    <span class="mini-dot mini-cyan"></span>
+                    <span class="mini-dot mini-green"></span>
+                </div>
+
+                <button class="calendar-btn" type="button">Ver agenda completa</button>
+            </div>
+
+            <aside class="panel-doctores-card card-soft">
+                <h3>Doctores</h3>
+
+                <div class="lista-doctores">
+                    {% if doctores %}
                         {% for doc in doctores %}
                             {% if doc.especialidad == "Psicología" %}
                                 {% set prefijo = "Lic." %}
-                            {% elif doc.nombre == "Andrea" or doc.nombre == "Laura" %}
-                                {% set prefijo = "Dra." %}
+                                {% set clase_color = "color-psicologia" %}
+                            {% elif doc.especialidad == "Obstetricia" %}
+                                {% if doc.nombre == "Andrea" or doc.nombre == "Laura" %}
+                                    {% set prefijo = "Dra." %}
+                                {% else %}
+                                    {% set prefijo = "Dr." %}
+                                {% endif %}
+                                {% set clase_color = "color-obstetricia" %}
+                            {% elif doc.especialidad == "Dermatología" %}
+                                {% if doc.nombre == "Andrea" or doc.nombre == "Laura" %}
+                                    {% set prefijo = "Dra." %}
+                                {% else %}
+                                    {% set prefijo = "Dr." %}
+                                {% endif %}
+                                {% set clase_color = "color-dermatologia" %}
+                            {% elif doc.especialidad == "Nutriología" %}
+                                {% if doc.nombre == "Laura" %}
+                                    {% set prefijo = "Dra." %}
+                                {% else %}
+                                    {% set prefijo = "Dr." %}
+                                {% endif %}
+                                {% set clase_color = "color-nutriologia" %}
                             {% else %}
-                                {% set prefijo = "Dr." %}
+                                {% if doc.nombre == "Andrea" or doc.nombre == "Laura" %}
+                                    {% set prefijo = "Dra." %}
+                                {% else %}
+                                    {% set prefijo = "Dr." %}
+                                {% endif %}
+                                {% set clase_color = "color-default" %}
                             {% endif %}
 
-                            <option value="{{ doc.id_doctor }}" {% if id_doctor|string == doc.id_doctor|string %}selected{% endif %}>
-                                {{ prefijo }} {{ doc.nombre }} {{ doc.apellido_paterno }} - {{ doc.especialidad }}
-                            </option>
+                            <div class="doctor-item">
+                                <span class="doctor-color {{ clase_color }}"></span>
+                                <span>{{ prefijo }} {{ doc.nombre }} {{ doc.apellido_paterno }} — {{ doc.especialidad }}</span>
+                            </div>
                         {% endfor %}
-                    </select>
-                </div>
-
-                <div class="grupo-campo">
-                    <label for="filtro">Filtro</label>
-                    <select name="filtro" id="filtro">
-                        <option value="proximas" {% if filtro == "proximas" %}selected{% endif %}>Próximas</option>
-                        <option value="pasadas" {% if filtro == "pasadas" %}selected{% endif %}>Pasadas</option>
-                        <option value="siguiente_mes" {% if filtro == "siguiente_mes" %}selected{% endif %}>Siguiente mes</option>
-                        <option value="todas" {% if filtro == "todas" %}selected{% endif %}>Todas</option>
-                    </select>
-                </div>
-
-                <div class="grupo-campo grupo-campo-boton">
-                    <button type="submit" class="btn-enviar-cita">Consultar</button>
-                </div>
-            </form>
-
-            {% if doctor_seleccionado %}
-            <div class="resumen-doctor">
-                <h3>
-                    Citas de
-                    {% if doctor_seleccionado.especialidad == "Psicología" %}
-                        Lic.
-                    {% elif doctor_seleccionado.nombre == "Andrea" or doctor_seleccionado.nombre == "Laura" %}
-                        Dra.
                     {% else %}
-                        Dr.
+                        <p>No hay médicos registrados.</p>
                     {% endif %}
-                    {{ doctor_seleccionado.nombre }} {{ doctor_seleccionado.apellido_paterno }}
-                </h3>
-                <p>Especialidad: {{ doctor_seleccionado.especialidad }}</p>
-            </div>
-            {% endif %}
+                </div>
 
-            {% if citas %}
-            <div class="tabla-citas-contenedor">
-                <table class="tabla-citas">
-                    <thead>
-                        <tr>
-                            <th>Folio</th>
-                            <th>Expediente</th>
-                            <th>Paciente</th>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                            <th>Teléfono</th>
-                            <th>Correo</th>
-                            <th>Motivo</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cita in citas %}
-                        <tr>
-                            <td>{{ cita.folio }}</td>
-                            <td>{{ cita.numero_expediente }}</td>
-                            <td>{{ cita.nombre }} {{ cita.apellido_paterno }} {{ cita.apellido_materno }}</td>
-                            <td>{{ cita.fecha }}</td>
-                            <td>{{ cita.hora }}</td>
-                            <td>{{ cita.telefono }}</td>
-                            <td>{{ cita.correo }}</td>
-                            <td>{{ cita.motivo }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% elif id_doctor %}
-            <div class="mensaje-exito">
-                No se encontraron citas para ese médico con el filtro seleccionado.
-            </div>
-            {% endif %}
-        </div>
+                <hr>
+            </aside>
 
-        <!-- TARJETA LATERAL DE DOCTORES -->
-        <aside class="panel-doctores-card">
-            <h3>Doctores</h3>
-
-            <div class="lista-doctores">
-                {% if doctores %}
-                    {% for doc in doctores %}
-                        {% if doc.especialidad == "Psicología" %}
-                            {% set prefijo = "Lic." %}
-                            {% set clase_color = "color-psicologia" %}
-                        {% elif doc.especialidad == "Obstetricia" %}
-                            {% if doc.nombre == "Andrea" or doc.nombre == "Laura" %}
-                                {% set prefijo = "Dra." %}
-                            {% else %}
-                                {% set prefijo = "Dr." %}
-                            {% endif %}
-                            {% set clase_color = "color-obstetricia" %}
-                        {% elif doc.especialidad == "Dermatología" %}
-                            {% if doc.nombre == "Andrea" or doc.nombre == "Laura" %}
-                                {% set prefijo = "Dra." %}
-                            {% else %}
-                                {% set prefijo = "Dr." %}
-                            {% endif %}
-                            {% set clase_color = "color-dermatologia" %}
-                        {% elif doc.especialidad == "Nutriología" %}
-                            {% set prefijo = "Dr." %}
-                            {% set clase_color = "color-nutriologia" %}
-                        {% else %}
-                            {% if doc.nombre == "Andrea" or doc.nombre == "Laura" %}
-                                {% set prefijo = "Dra." %}
-                            {% else %}
-                                {% set prefijo = "Dr." %}
-                            {% endif %}
-                            {% set clase_color = "color-default" %}
-                        {% endif %}
-
-                        <div class="doctor-item">
-                            <span class="doctor-color {{ clase_color }}"></span>
-                            <span>{{ prefijo }} {{ doc.nombre }} {{ doc.apellido_paterno }} — {{ doc.especialidad }}</span>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <p>No hay médicos registrados.</p>
-                {% endif %}
-            </div>
-
-            <hr>
-
-            <a href="{{ url_for('panel.panel_citas', filtro='todas') }}" class="btn-panel-secundario">
-                Ver todas las citas
-            </a>
-
-            <a href="{{ url_for('panel.panel_citas') }}" class="btn-panel-primario">
-                Ver solo mis citas
-            </a>
         </aside>
 
     </div>
