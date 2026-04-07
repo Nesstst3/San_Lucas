@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login paciente | Clínica San Lucas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root{
+            --primary:#2f80ed;
+            --primary-dark:#1f6fe0;
+            --text:#243447;
+            --muted:#6b7280;
+        }
+
+        *{ box-sizing:border-box; font-family:'Inter',sans-serif; }
+
+        body{
+            margin:0;
+            min-height:100vh;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            background:
+                radial-gradient(circle at top left, rgba(86,204,242,.18), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(47,128,237,.12), transparent 24%),
+                linear-gradient(180deg,#f7fbff 0%,#eef4fb 100%);
+            overflow:hidden;
+        }
+
+        .login-wrapper{
+            width:100%;
+            max-width:1280px;
+            display:grid;
+            grid-template-columns: 1fr 620px 1fr;
+            gap:18px;
+            align-items:center;
+            padding:30px;
+        }
+
+        .side-illustration{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#5ca3ff;
+            font-size:10rem;
+            opacity:.9;
+        }
+
+        .login-center{
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+        }
+
+        .logo{
+            text-align:center;
+            color:#3f78d4;
+            font-size:2.1rem;
+            font-weight:500;
+            margin-bottom:22px;
+            line-height:1.15;
+        }
+
+        .login-card{
+            width:100%;
+            background:rgba(255,255,255,.92);
+            backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,.75);
+            border-radius:42px;
+            box-shadow:0 28px 60px rgba(31,76,148,.10);
+            padding:42px 46px 34px;
+        }
+
+        .login-card h1{
+            margin:0 0 12px;
+            text-align:center;
+            font-size:3.2rem;
+            color:#25365a;
+            font-weight:800;
+        }
+
+        .sub{
+            text-align:center;
+            color:#73829b;
+            font-size:1.18rem;
+            margin-bottom:30px;
+        }
+
+        .input-group{
+            margin-bottom:22px;
+        }
+
+        .input-wrap{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            border:1px solid #dbe7f7;
+            background:linear-gradient(180deg,#f8fbff,#f4f8ff);
+            border-radius:24px;
+            padding:18px 20px;
+        }
+
+        .input-icon{
+            font-size:1.6rem;
+            color:#3a7df0;
+            flex-shrink:0;
+        }
+
+        input{
+            border:none;
+            background:transparent;
+            width:100%;
+            outline:none;
+            font-size:1.2rem;
+            color:#31415c;
+        }
+
+        .btn-login{
+            width:100%;
+            border:none;
+            border-radius:24px;
+            background:linear-gradient(135deg,#2f80ed,#356df5);
+            color:#fff;
+            font-size:1.25rem;
+            font-weight:800;
+            padding:20px;
+            cursor:pointer;
+            box-shadow:0 16px 28px rgba(47,128,237,.20);
+            margin-top:8px;
+        }
+
+        .welcome-text{
+            text-align:center;
+            color:#68788f;
+            margin-top:28px;
+            font-size:1.14rem;
+        }
+
+        .welcome-text strong{
+            color:#334e7d;
+        }
+
+        .flash-message{
+            border-radius:16px;
+            padding:12px 16px;
+            font-weight:600;
+            margin-bottom:14px;
+        }
+
+        .flash-error{
+            background:#fef2f2;
+            color:#b91c1c;
+            border:1px solid #fecaca;
+        }
+
+        .back-link{
+            margin-top:18px;
+            text-align:center;
+        }
+
+        .back-link a{
+            color:#3b82f6;
+            text-decoration:none;
+            font-weight:700;
+        }
+
+        @media (max-width: 1100px){
+            .login-wrapper{
+                grid-template-columns: 1fr;
+            }
+
+            .side-illustration{
+                display:none;
+            }
+        }
+
+        @media (max-width: 768px){
+            .login-card{
+                padding:32px 24px 28px;
+                border-radius:28px;
+            }
+
+            .login-card h1{
+                font-size:2.4rem;
+            }
+
+            .sub{
+                font-size:1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-wrapper">
+    <div class="side-illustration">🩺</div>
+
+    <div class="login-center">
+        <div class="logo">CLÍNICA<br>SAN LUCAS</div>
+
+        <div class="login-card">
+            <h1>Iniciar Sesión</h1>
+            <div class="sub">Ingrese con su correo y contraseña</div>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message flash-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <div class="input-group">
+                    <div class="input-wrap">
+                        <span class="input-icon">✉️</span>
+                        <input type="text" name="usuario" placeholder="Correo electrónico" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-wrap">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" name="password" placeholder="Contraseña" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-login">Iniciar sesión</button>
+            </form>
+
+            <div class="welcome-text">
+                Bienvenido a la plataforma de pacientes de <strong>Clínica San Lucas</strong>.
+            </div>
+
+            <div class="back-link">
+                <a href="{{ url_for('home.inicio') }}">← Volver al inicio</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="side-illustration">💊</div>
+</div>
+
+</body>
+</html>

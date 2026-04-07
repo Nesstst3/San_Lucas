@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel paciente | Clínica San Lucas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --primary:#2f80ed;
+            --primary-dark:#1f6fe0;
+            --soft-bg:#eef4fb;
+            --card-bg:rgba(255,255,255,.88);
+            --text:#243447;
+            --muted:#6b7280;
+            --line:#dfe8f5;
+            --shadow:0 18px 38px rgba(31,76,148,.08);
+        }
+
+        *{
+            box-sizing:border-box;
+            font-family:'Inter',sans-serif;
+        }
+
+        body{
+            margin:0;
+            min-height:100vh;
+            color:var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(86,204,242,.14), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(47,128,237,.10), transparent 25%),
+                linear-gradient(180deg,#f7fbff 0%, var(--soft-bg) 100%);
+        }
+
+        header{
+            background:linear-gradient(135deg,#3f8cf0,#2f78da);
+            padding:18px 28px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            color:#fff;
+            box-shadow:0 8px 24px rgba(26,87,173,.16);
+        }
+
+        .header-brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            font-size:1.35rem;
+            font-weight:800;
+        }
+
+        .header-brand .brand-icon{
+            width:42px;
+            height:42px;
+            border-radius:14px;
+            background:rgba(255,255,255,.18);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.25rem;
+        }
+
+        .header-actions{
+            display:flex;
+            align-items:center;
+            gap:12px;
+        }
+
+        .header-user{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            background:rgba(255,255,255,.12);
+            padding:10px 14px;
+            border-radius:16px;
+            font-weight:700;
+        }
+
+        .logout-btn{
+            color:#fff;
+            text-decoration:none;
+            font-weight:700;
+            background:rgba(255,255,255,.12);
+            padding:10px 16px;
+            border-radius:14px;
+        }
+
+        .page{
+            max-width:1380px;
+            margin:28px auto;
+            padding:0 18px 36px;
+        }
+
+        .dashboard-layout{
+            display:grid;
+            grid-template-columns:260px minmax(0,1fr) 310px;
+            gap:22px;
+            align-items:start;
+        }
+
+        .card-soft{
+            background:var(--card-bg);
+            backdrop-filter:blur(12px);
+            border:1px solid rgba(255,255,255,.75);
+            border-radius:28px;
+            box-shadow:var(--shadow);
+        }
+
+        .sidebar{
+            padding:18px;
+            position:sticky;
+            top:18px;
+        }
+
+        .menu{
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+        }
+
+        .menu a{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            text-decoration:none;
+            color:#405268;
+            font-size:1.05rem;
+            font-weight:700;
+            padding:16px 18px;
+            border-radius:18px;
+            transition:.2s ease;
+        }
+
+        .menu a.active{
+            background:linear-gradient(135deg,#2f80ed,#4a86e8);
+            color:#fff;
+            box-shadow:0 12px 22px rgba(47,128,237,.18);
+        }
+
+        .menu a:hover{
+            background:#f4f8ff;
+        }
+
+        .sidebar-extra{
+            margin-top:20px;
+            padding:20px;
+            border-radius:22px;
+            background:linear-gradient(180deg,#f5f9ff,#eef5ff);
+            border:1px solid #dbe7f7;
+        }
+
+        .sidebar-extra h3{
+            margin:0 0 10px;
+            font-size:1.2rem;
+        }
+
+        .sidebar-extra p{
+            margin:0;
+            color:#66768d;
+            line-height:1.7;
+        }
+
+        .mid-column{
+            display:flex;
+            flex-direction:column;
+            gap:22px;
+            min-width:0;
+        }
+
+        .hero-card{
+            padding:32px;
+            position:relative;
+            overflow:hidden;
+        }
+
+        .hero-card::after{
+            content:"";
+            position:absolute;
+            width:220px;
+            height:220px;
+            border-radius:50%;
+            top:-70px;
+            right:-50px;
+            background:rgba(47,128,237,.06);
+        }
+
+        .hero-title{
+            font-size:3rem;
+            font-weight:800;
+            margin:0 0 10px;
+            color:#1f3155;
+        }
+
+        .hero-sub{
+            font-size:1.18rem;
+            color:#66768d;
+            margin:0;
+        }
+
+        .next-cita-card{
+            padding:26px;
+        }
+
+        .section-title{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:18px;
+        }
+
+        .section-title h2{
+            margin:0;
+            font-size:1.5rem;
+            font-weight:800;
+            color:#22355b;
+        }
+
+        .section-link{
+            text-decoration:none;
+            color:#2f80ed;
+            font-weight:800;
+        }
+
+        .next-cita-box{
+            display:grid;
+            grid-template-columns:240px minmax(0,1fr);
+            gap:20px;
+            background:linear-gradient(135deg,#f5f9ff,#eef4ff);
+            border:1px solid #dde8f7;
+            border-radius:24px;
+            padding:22px;
+        }
+
+        .next-left{
+            border-right:1px solid #dbe6f5;
+            padding-right:18px;
+        }
+
+        .big-number{
+            font-size:4rem;
+            font-weight:800;
+            color:#2f80ed;
+            line-height:1;
+            margin:10px 0 6px;
+        }
+
+        .muted{
+            color:#66768d;
+            line-height:1.6;
+        }
+
+        .next-right h3{
+            margin:0 0 10px;
+            font-size:2rem;
+            color:#243447;
+        }
+
+        .next-right .date-line{
+            font-size:1.12rem;
+            font-weight:700;
+            color:#3f5b82;
+            margin-bottom:8px;
+        }
+
+        .next-right .doctor-line{
+            color:#66768d;
+            font-size:1.04rem;
+            margin-top:10px;
+        }
+
+        .grid-cards{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:18px;
+        }
+
+        .mini-card{
+            padding:24px;
+            min-height:185px;
+            display:flex;
+            flex-direction:column;
+            justify-content:space-between;
+        }
+
+        .mini-card h3{
+            margin:0 0 8px;
+            font-size:1.2rem;
+            color:#22355b;
+        }
+
+        .mini-card .mini-number{
+            font-size:3rem;
+            font-weight:800;
+            line-height:1;
+            color:#2f80ed;
+        }
+
+        .mini-card .mini-desc{
+            color:#66768d;
+            line-height:1.5;
+        }
+
+        .mini-btn{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            text-decoration:none;
+            padding:12px 18px;
+            border-radius:16px;
+            background:linear-gradient(135deg,#2f80ed,#4a86e8);
+            color:#fff;
+            font-weight:800;
+            width:max-content;
+            min-width:170px;
+        }
+
+        .mini-btn.secondary{
+            background:#f6f9fd;
+            color:#51627c;
+            border:1px solid #dbe5f2;
+        }
+
+        .agenda-card{
+            padding:26px;
+        }
+
+        .agenda-grid{
+            display:grid;
+            grid-template-columns:minmax(0,1fr) 280px;
+            gap:18px;
+        }
+
+        .agenda-main{
+            background:linear-gradient(135deg,#f5f9ff,#eef4ff);
+            border:1px solid #dde8f7;
+            border-radius:22px;
+            padding:22px;
+        }
+
+        .agenda-main h3{
+            margin:0 0 10px;
+            font-size:1.8rem;
+        }
+
+        .agenda-main p{
+            margin:0 0 18px;
+            color:#66768d;
+            line-height:1.6;
+            font-size:1.05rem;
+        }
+
+        .agenda-actions{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .agenda-side{
+            background:#fbfdff;
+            border:1px solid #dfe8f5;
+            border-radius:22px;
+            padding:20px;
+        }
+
+        .agenda-side h4{
+            margin:0 0 10px;
+            font-size:1.25rem;
+        }
+
+        .calendar-mini{
+            margin-top:10px;
+            display:grid;
+            grid-template-columns:repeat(7,1fr);
+            gap:8px;
+            text-align:center;
+            color:#5c6f89;
+            font-weight:700;
+        }
+
+        .calendar-mini .day-name{
+            color:#8796ab;
+            font-size:.9rem;
+        }
+
+        .calendar-mini .day{
+            padding:8px 0;
+            border-radius:12px;
+            background:#fff;
+            border:1px solid #edf2f8;
+        }
+
+        .calendar-mini .today{
+            background:linear-gradient(135deg,#2f80ed,#4a86e8);
+            color:#fff;
+            border:none;
+        }
+
+        .right-column{
+            display:flex;
+            flex-direction:column;
+            gap:18px;
+        }
+
+        .profile-card,
+        .reco-card{
+            padding:24px;
+        }
+
+        .profile-card h3,
+        .reco-card h3{
+            margin:0 0 16px;
+            font-size:1.2rem;
+            color:#22355b;
+        }
+
+        .profile-header{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            background:linear-gradient(135deg,#f5f9ff,#eef4ff);
+            border:1px solid #dde8f7;
+            border-radius:20px;
+            padding:18px;
+            margin-bottom:16px;
+        }
+
+        .profile-avatar{
+            width:62px;
+            height:62px;
+            border-radius:18px;
+            background:linear-gradient(135deg,#2f80ed,#4a86e8);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:1.45rem;
+            font-weight:800;
+            flex-shrink:0;
+        }
+
+        .profile-name{
+            font-size:1.2rem;
+            font-weight:800;
+            color:#22355b;
+        }
+
+        .profile-role{
+            color:#74839a;
+            margin-top:4px;
+        }
+
+        .profile-list{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .profile-item{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            color:#55657c;
+            line-height:1.5;
+        }
+
+        .reco-box{
+            background:linear-gradient(135deg,#fff,#f8fbff);
+            border:1px solid #e5edf8;
+            border-radius:20px;
+            padding:18px;
+            margin-bottom:14px;
+        }
+
+        .reco-box:last-child{
+            margin-bottom:0;
+        }
+
+        .reco-box h4{
+            margin:0 0 8px;
+            color:#22355b;
+            font-size:1.08rem;
+        }
+
+        .reco-box p{
+            margin:0;
+            color:#66768d;
+            line-height:1.6;
+        }
+
+        .reco-box a{
+            display:inline-block;
+            margin-top:10px;
+            color:#2f80ed;
+            text-decoration:none;
+            font-weight:800;
+        }
+
+        @media (max-width: 1260px){
+            .dashboard-layout{
+                grid-template-columns:230px minmax(0,1fr);
+            }
+
+            .right-column{
+                grid-column:1 / -1;
+                display:grid;
+                grid-template-columns:1fr 1fr;
+            }
+        }
+
+        @media (max-width: 980px){
+            .dashboard-layout{
+                grid-template-columns:1fr;
+            }
+
+            .sidebar{
+                position:relative;
+                top:0;
+            }
+
+            .grid-cards{
+                grid-template-columns:1fr;
+            }
+
+            .agenda-grid{
+                grid-template-columns:1fr;
+            }
+
+            .right-column{
+                grid-template-columns:1fr;
+            }
+
+            .next-cita-box{
+                grid-template-columns:1fr;
+            }
+
+            .next-left{
+                border-right:none;
+                border-bottom:1px solid #dbe6f5;
+                padding-right:0;
+                padding-bottom:16px;
+            }
+        }
+
+        @media (max-width: 768px){
+            header{
+                padding:16px 18px;
+                flex-direction:column;
+                gap:12px;
+                align-items:flex-start;
+            }
+
+            .hero-title{
+                font-size:2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-brand">
+        <div class="brand-icon">🩺</div>
+        <span>Portal de pacientes | Clínica San Lucas</span>
+    </div>
+
+    <div class="header-actions">
+        <div class="header-user">
+            <span>👤</span>
+            <span>{{ cuenta.nombre }} {{ cuenta.apellido_paterno }}</span>
+        </div>
+        <a href="{{ url_for('paciente_auth.logout_paciente') }}" class="logout-btn">Cerrar sesión</a>
+    </div>
+</header>
+
+<div class="page">
+    <div class="dashboard-layout">
+
+        <aside class="sidebar card-soft">
+            <nav class="menu">
+                <a href="#" class="active">🏠 Inicio</a>
+                <a href="#">📅 Mis citas</a>
+                <a href="#">📄 Historial</a>
+                <a href="#">💊 Recetas</a>
+                <a href="#">👤 Mi perfil</a>
+            </nav>
+
+            <div class="sidebar-extra">
+                <h3>¿Necesitas ayuda?</h3>
+                <p>
+                    Aquí puedes agregar un texto corto con información importante,
+                    recordatorios o un acceso rápido para el paciente.
+                </p>
+            </div>
+        </aside>
+
+        <main class="mid-column">
+
+            <section class="hero-card card-soft">
+                <h1 class="hero-title">Hola {{ cuenta.nombre }} 👋</h1>
+                <p class="hero-sub">
+                    Te damos la bienvenida a tu portal de paciente.
+                </p>
+            </section>
+
+<section class="next-cita-card card-soft">
+    <div class="section-title">
+        <h2>Próxima cita</h2>
+        <a href="#" class="section-link">Ver todas las citas</a>
+    </div>
+
+    {% if proxima_cita %}
+    <div class="next-cita-box">
+        <div class="next-left">
+            <div class="muted">Próximas citas agendadas</div>
+            <div class="big-number">{{ "%02d"|format(total_proximas) }}</div>
+            <div class="muted">Disponibles para consulta y seguimiento</div>
+        </div>
+
+        <div class="next-right">
+            <h3>{{ proxima_cita.especialidad }}</h3>
+            <div class="date-line">{{ proxima_cita.fecha }} · {{ proxima_cita.hora }}</div>
+            <div class="muted">
+                {{ proxima_cita.motivo if proxima_cita.motivo else 'Consulta médica programada.' }}
+            </div>
+            <div class="doctor-line">
+                Doctor asignado: Dr./Dra. {{ proxima_cita.doctor_nombre }} {{ proxima_cita.doctor_apellido }}
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="next-cita-box">
+        <div class="next-left">
+            <div class="muted">Próximas citas agendadas</div>
+            <div class="big-number">00</div>
+            <div class="muted">No tienes citas próximas registradas.</div>
+        </div>
+
+        <div class="next-right">
+            <h3>Sin citas próximas</h3>
+            <div class="date-line">Agenda una nueva cita cuando lo necesites</div>
+            <div class="muted">
+                Tu panel mostrará aquí la siguiente consulta médica programada.
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+            <section class="grid-cards">
+                <div class="mini-card card-soft">
+    <div>
+        <h3>Próximas citas</h3>
+        <div class="mini-number">{{ "%02d"|format(total_proximas) }}</div>
+        <div class="mini-desc">Próximas citas agendadas para seguimiento médico.</div>
+    </div>
+    <a href="#" class="mini-btn">Gestionar</a>
+</div>
+
+                <div class="mini-card card-soft">
+                    <div>
+                        <h3>Historial reciente</h3>
+                        <div class="mini-number">01</div>
+                        <div class="mini-desc">Última nota o consulta registrada en tu historial.</div>
+                    </div>
+                    <a href="#" class="mini-btn secondary">Ver historial</a>
+                </div>
+
+                <div class="mini-card card-soft">
+                    <div>
+                        <h3>Recetas pendientes</h3>
+                        <div class="mini-number">01</div>
+                        <div class="mini-desc">Consulta las recetas o indicaciones compartidas por tu médico.</div>
+                    </div>
+                    <a href="#" class="mini-btn secondary">Ver recetas</a>
+                </div>
+            </section>
+
+            <section class="agenda-card card-soft">
+    <div class="agenda-grid">
+        <div class="agenda-main">
+            <h3>Agendar nueva cita</h3>
+            <p>
+                Programa una nueva cita médica seleccionando tu especialidad,
+                fecha y horario disponible.
+            </p>
+
+            <div class="agenda-actions">
+                <a href="{{ url_for('cita.agendar_cita') }}" class="mini-btn">Agendar cita</a>
+                <a href="#" class="mini-btn secondary">Ver mis citas</a>
+            </div>
+
+            <div style="margin-top:24px;">
+                <h3 style="font-size:1.25rem; margin-bottom:14px;">Mis próximas citas</h3>
+
+                {% if proximas_citas %}
+                    <div style="display:flex; flex-direction:column; gap:12px;">
+                        {% for cita in proximas_citas %}
+                        <div style="background:#fff; border:1px solid #dde8f7; border-radius:18px; padding:16px 18px;">
+                            <div style="font-weight:800; color:#22355b; margin-bottom:6px;">
+                                {{ cita.especialidad }}
+                            </div>
+                            <div style="color:#5f6f84; margin-bottom:4px;">
+                                <strong>Fecha:</strong> {{ cita.fecha }} | <strong>Hora:</strong> {{ cita.hora }}
+                            </div>
+                            <div style="color:#5f6f84; margin-bottom:4px;">
+                                <strong>Médico:</strong> {{ cita.doctor_nombre }} {{ cita.doctor_apellido }}
+                            </div>
+                            <div style="color:#5f6f84;">
+                                <strong>Motivo:</strong> {{ cita.motivo if cita.motivo else 'Sin motivo registrado' }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div style="background:#fff; border:1px solid #dde8f7; border-radius:18px; padding:18px; color:#66768d;">
+                        No tienes citas próximas registradas por el momento.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="agenda-side">
+            <h4>Mi agenda</h4>
+            <div class="muted">Resumen rápido de próximas fechas</div>
+
+            <div class="calendar-mini">
+                <div class="day-name">L</div>
+                <div class="day-name">M</div>
+                <div class="day-name">M</div>
+                <div class="day-name">J</div>
+                <div class="day-name">V</div>
+                <div class="day-name">S</div>
+                <div class="day-name">D</div>
+
+                <div class="day">11</div>
+                <div class="day">12</div>
+                <div class="day">13</div>
+                <div class="day">14</div>
+                <div class="day">15</div>
+                <div class="day">16</div>
+                <div class="day">17</div>
+
+                <div class="day">18</div>
+                <div class="day">19</div>
+                <div class="day">20</div>
+                <div class="day">21</div>
+                <div class="day">22</div>
+                <div class="day today">23</div>
+                <div class="day">24</div>
+
+                <div class="day">25</div>
+                <div class="day">26</div>
+                <div class="day">27</div>
+                <div class="day">28</div>
+                <div class="day">29</div>
+                <div class="day">30</div>
+                <div class="day">31</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+        </main>
+
+        <aside class="right-column">
+
+            <section class="profile-card card-soft">
+                <h3>Mi perfil</h3>
+
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        {{ cuenta.nombre[0] }}{{ cuenta.apellido_paterno[0] }}
+                    </div>
+                    <div>
+                        <div class="profile-name">{{ cuenta.nombre }} {{ cuenta.apellido_paterno }}</div>
+                        <div class="profile-role">Paciente</div>
+                    </div>
+                </div>
+
+                <div class="profile-list">
+                    <div class="profile-item">🗂️ Expediente: {{ cuenta.numero_expediente }}</div>
+                    <div class="profile-item">📧 {{ cuenta.correo }}</div>
+                    <div class="profile-item">🔐 Acceso activo a tu portal</div>
+                </div>
+            </section>
+
+            <section class="reco-card card-soft">
+                <h3>Recomendaciones para ti</h3>
+
+                <div class="reco-box">
+                    <h4>Consejos de nutrición</h4>
+                    <p>Aprende a llevar una alimentación más equilibrada y saludable.</p>
+                    <a href="#">Leer más</a>
+                </div>
+
+                <div class="reco-box">
+                    <h4>Bienestar emocional</h4>
+                    <p>Explora sugerencias prácticas para cuidar tu mente y tu bienestar.</p>
+                    <a href="#">Leer más</a>
+                </div>
+
+                <div class="reco-box">
+                    <h4>Seguridad y privacidad</h4>
+                    <p>Mantén segura tu información médica y conoce tus accesos disponibles.</p>
+                    <a href="#">Leer más</a>
+                </div>
+            </section>
+
+        </aside>
+
+    </div>
+</div>
+
+</body>
+</html>

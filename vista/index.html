@@ -16,7 +16,7 @@
             <a href="/">Inicio</a>
             <a href="#especialidades">Especialidades</a>
             <a href="#doctores">Doctores</a>
-            <button class="login">Login Paciente</button>
+            <a href="{{ url_for('paciente_auth.login_paciente') }}" class="btn btn-primary">Login Paciente</a>
            <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Login Médico</a>
         </nav>
     </header>
