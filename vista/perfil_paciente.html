@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi perfil | Clínica San Lucas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --primary:#2f80ed;
+            --soft-bg:#eef4fb;
+            --card-bg:rgba(255,255,255,.92);
+            --text:#243447;
+            --muted:#6b7280;
+            --line:#dfe8f5;
+            --shadow:0 18px 38px rgba(31,76,148,.08);
+        }
+
+        *{
+            box-sizing:border-box;
+            font-family:'Inter',sans-serif;
+        }
+
+        body{
+            margin:0;
+            min-height:100vh;
+            color:var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(86,204,242,.14), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(47,128,237,.10), transparent 25%),
+                linear-gradient(180deg,#f7fbff 0%, var(--soft-bg) 100%);
+        }
+
+        header{
+            background:linear-gradient(135deg,#3f8cf0,#2f78da);
+            padding:18px 28px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            color:#fff;
+            box-shadow:0 8px 24px rgba(26,87,173,.16);
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .header-brand{
+            font-size:1.2rem;
+            font-weight:800;
+        }
+
+        .header-user{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            background:rgba(255,255,255,.12);
+            padding:10px 14px;
+            border-radius:16px;
+            font-weight:700;
+        }
+
+        .page{
+            max-width:1200px;
+            margin:28px auto;
+            padding:0 18px 36px;
+        }
+
+        .card{
+            background:var(--card-bg);
+            backdrop-filter:blur(10px);
+            border:1px solid rgba(255,255,255,.75);
+            border-radius:28px;
+            box-shadow:var(--shadow);
+        }
+
+        .top{
+            display:grid;
+            grid-template-columns:340px minmax(0,1fr);
+            gap:22px;
+            align-items:start;
+        }
+
+        .profile-hero{
+            padding:28px;
+            text-align:center;
+        }
+
+        .avatar{
+            width:92px;
+            height:92px;
+            border-radius:24px;
+            background:linear-gradient(135deg,#2f80ed,#4a86e8);
+            color:#fff;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:2rem;
+            font-weight:800;
+            margin:0 auto 18px;
+            box-shadow:0 14px 26px rgba(47,128,237,.22);
+        }
+
+        .profile-name{
+            font-size:1.7rem;
+            font-weight:800;
+            color:#1f3155;
+            margin-bottom:6px;
+        }
+
+        .profile-role{
+            color:#6b7280;
+            font-weight:600;
+            margin-bottom:18px;
+        }
+
+        .badge{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:8px 14px;
+            border-radius:999px;
+            background:#e8f1ff;
+            color:#2f80ed;
+            border:1px solid #cfe0fb;
+            font-weight:800;
+            font-size:.92rem;
+        }
+
+        .content{
+            display:flex;
+            flex-direction:column;
+            gap:22px;
+        }
+
+        .section-card{
+            padding:26px;
+        }
+
+        .section-card h2{
+            margin:0 0 18px;
+            font-size:1.35rem;
+            color:#22355b;
+        }
+
+        .info-grid{
+            display:grid;
+            grid-template-columns:repeat(2, 1fr);
+            gap:14px;
+        }
+
+        .info-item{
+            background:linear-gradient(135deg,#f5f9ff,#eef4ff);
+            border:1px solid #dde8f7;
+            border-radius:20px;
+            padding:16px 18px;
+        }
+
+        .info-label{
+            font-size:.88rem;
+            font-weight:800;
+            color:#6b7a90;
+            margin-bottom:6px;
+            text-transform:uppercase;
+            letter-spacing:.03em;
+        }
+
+        .info-value{
+            color:#243447;
+            font-weight:600;
+            line-height:1.5;
+            word-break:break-word;
+        }
+
+        .actions{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .btn{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            text-decoration:none;
+            padding:12px 18px;
+            border-radius:16px;
+            font-weight:800;
+        }
+
+        .btn-primary{
+            background:linear-gradient(135deg,#2f80ed,#4a86e8);
+            color:#fff;
+        }
+
+        .btn-secondary{
+            background:#f6f9fd;
+            color:#51627c;
+            border:1px solid #dbe5f2;
+        }
+
+        .btn-danger{
+            background:#fff5f5;
+            color:#c0392b;
+            border:1px solid #f2c9c9;
+        }
+
+        @media (max-width: 900px){
+            .top{
+                grid-template-columns:1fr;
+            }
+
+            .info-grid{
+                grid-template-columns:1fr;
+            }
+        }
+
+        @media (max-width: 768px){
+            header{
+                padding:16px 18px;
+                align-items:flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-brand">🩺 Clínica San Lucas</div>
+
+    <div class="header-user">
+        <span>👤</span>
+        <span>{{ cuenta.nombre }} {{ cuenta.apellido_paterno }}</span>
+    </div>
+</header>
+
+<div class="page">
+    <div class="top">
+
+        <section class="profile-hero card">
+            <div class="avatar">
+                {{ cuenta.nombre[0] }}{{ cuenta.apellido_paterno[0] }}
+            </div>
+
+            <div class="profile-name">
+                {{ cuenta.nombre }} {{ cuenta.apellido_paterno }}
+                {% if cuenta.get('apellido_materno') %}
+                    {{ cuenta.get('apellido_materno') }}
+                {% endif %}
+            </div>
+
+            <div class="profile-role">Paciente</div>
+            <div class="badge">Acceso activo</div>
+        </section>
+
+        <div class="content">
+
+            <section class="section-card card">
+                <h2>Datos personales</h2>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Nombre</div>
+                        <div class="info-value">{{ cuenta.nombre }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Apellido paterno</div>
+                        <div class="info-value">{{ cuenta.apellido_paterno }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Apellido materno</div>
+                        <div class="info-value">
+                            {{ cuenta.get('apellido_materno', 'No registrado') }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Correo electrónico</div>
+                        <div class="info-value">{{ cuenta.correo }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Teléfono</div>
+                        <div class="info-value">
+                            {{ cuenta.get('telefono', 'No registrado') }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Sexo</div>
+                        <div class="info-value">
+                            {{ cuenta.get('sexo', 'No registrado') }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Fecha de nacimiento</div>
+                        <div class="info-value">
+                            {{ cuenta.get('fecha_nacimiento', 'No registrada') }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Expediente</div>
+                        <div class="info-value">{{ cuenta.numero_expediente }}</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card card">
+                <h2>Cuenta y acceso</h2>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Usuario</div>
+                        <div class="info-value">
+                            {{ cuenta.get('usuario', cuenta.correo) }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Estado de cuenta</div>
+                        <div class="info-value">Activa</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Portal</div>
+                        <div class="info-value">Paciente</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Acceso</div>
+                        <div class="info-value">Autorizado</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section-card card">
+                <h2>Acciones rápidas</h2>
+
+                <div class="actions">
+                    <a href="{{ url_for('paciente_auth.panel_paciente') }}" class="btn btn-secondary">
+                        Volver al panel
+                    </a>
+
+                    <a href="{{ url_for('paciente_auth.cambiar_password_inicial') }}" class="btn btn-primary">
+                        Cambiar contraseña
+                    </a>
+
+                    <a href="{{ url_for('paciente_auth.logout_paciente') }}" class="btn btn-danger">
+                        Cerrar sesión
+                    </a>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

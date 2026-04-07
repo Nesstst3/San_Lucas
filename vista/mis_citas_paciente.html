@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mis citas | Clínica San Lucas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+            --primary:#2f80ed;
+            --primary-dark:#1f6fe0;
+            --soft-bg:#eef4fb;
+            --card-bg:rgba(255,255,255,.92);
+            --text:#243447;
+            --muted:#6b7280;
+            --line:#dfe8f5;
+            --shadow:0 18px 38px rgba(31,76,148,.08);
+        }
+
+        *{
+            box-sizing:border-box;
+            font-family:'Inter',sans-serif;
+        }
+
+        body{
+            margin:0;
+            min-height:100vh;
+            color:var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(86,204,242,.14), transparent 28%),
+                radial-gradient(circle at bottom right, rgba(47,128,237,.10), transparent 25%),
+                linear-gradient(180deg,#f7fbff 0%, var(--soft-bg) 100%);
+        }
+
+        header{
+            background:linear-gradient(135deg,#3f8cf0,#2f78da);
+            padding:18px 28px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            color:#fff;
+            box-shadow:0 8px 24px rgba(26,87,173,.16);
+        }
+
+        .header-brand{
+            display:flex;
+            align-items:center;
+            gap:12px;
+            font-size:1.2rem;
+            font-weight:800;
+        }
+
+        .header-user{
+            display:flex;
+            align-items:center;
+            gap:10px;
+            background:rgba(255,255,255,.12);
+            padding:10px 14px;
+            border-radius:16px;
+            font-weight:700;
+        }
+
+        .page{
+            max-width:1180px;
+            margin:28px auto;
+            padding:0 18px 36px;
+        }
+
+        .card{
+            background:var(--card-bg);
+            backdrop-filter:blur(10px);
+            border:1px solid rgba(255,255,255,.75);
+            border-radius:28px;
+            box-shadow:var(--shadow);
+        }
+
+        .top-bar{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:16px;
+            margin-bottom:22px;
+        }
+
+        .title-box{
+            padding:28px;
+        }
+
+        .title-box h1{
+            margin:0 0 8px;
+            font-size:2.2rem;
+            color:#1f3155;
+        }
+
+        .title-box p{
+            margin:0;
+            color:#66768d;
+            font-size:1.02rem;
+        }
+
+        .actions{
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+        }
+
+        .btn{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            text-decoration:none;
+            padding:12px 18px;
+            border-radius:16px;
+            font-weight:800;
+            border:none;
+            cursor:pointer;
+        }
+
+        .btn-primary{
+            background:linear-gradient(135deg,#2f80ed,#4a86e8);
+            color:#fff;
+        }
+
+        .btn-secondary{
+            background:#f6f9fd;
+            color:#51627c;
+            border:1px solid #dbe5f2;
+        }
+
+        .summary-grid{
+            display:grid;
+            grid-template-columns:repeat(2, 1fr);
+            gap:18px;
+            margin-bottom:22px;
+        }
+
+        .summary-card{
+            padding:24px;
+        }
+
+        .summary-card h3{
+            margin:0 0 8px;
+            font-size:1.15rem;
+            color:#22355b;
+        }
+
+        .summary-number{
+            font-size:3rem;
+            font-weight:800;
+            color:#2f80ed;
+            line-height:1;
+            margin-bottom:10px;
+        }
+
+        .summary-text{
+            color:#66768d;
+            line-height:1.6;
+        }
+
+        .list-card{
+            padding:26px;
+        }
+
+        .list-card h2{
+            margin:0 0 18px;
+            font-size:1.45rem;
+            color:#22355b;
+        }
+
+        .citas-list{
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+        }
+
+        .cita-item{
+            background:linear-gradient(135deg,#f5f9ff,#eef4ff);
+            border:1px solid #dde8f7;
+            border-radius:22px;
+            padding:20px;
+        }
+
+        .cita-top{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-bottom:12px;
+            flex-wrap:wrap;
+        }
+
+        .cita-especialidad{
+            font-size:1.15rem;
+            font-weight:800;
+            color:#22355b;
+        }
+
+        .cita-badge{
+            background:#e8f1ff;
+            color:#2f80ed;
+            border:1px solid #cfe0fb;
+            padding:8px 12px;
+            border-radius:999px;
+            font-size:.88rem;
+            font-weight:800;
+        }
+
+        .cita-info{
+            display:grid;
+            grid-template-columns:repeat(2, 1fr);
+            gap:10px 18px;
+        }
+
+        .cita-info div{
+            color:#5f6f84;
+            line-height:1.5;
+        }
+
+        .empty-state{
+            padding:26px;
+            border-radius:22px;
+            background:#fbfdff;
+            border:1px solid #dfe8f5;
+            color:#66768d;
+            line-height:1.7;
+        }
+
+        @media (max-width: 768px){
+            header{
+                padding:16px 18px;
+                flex-direction:column;
+                gap:12px;
+                align-items:flex-start;
+            }
+
+            .summary-grid{
+                grid-template-columns:1fr;
+            }
+
+            .cita-info{
+                grid-template-columns:1fr;
+            }
+
+            .top-bar{
+                flex-direction:column;
+                align-items:stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-brand">
+        <span>🩺 Clínica San Lucas</span>
+    </div>
+
+    <div class="header-user">
+        <span>👤</span>
+        <span>{{ cuenta.nombre }} {{ cuenta.apellido_paterno }}</span>
+    </div>
+</header>
+
+<div class="page">
+
+    <div class="top-bar">
+        <section class="title-box card" style="flex:1;">
+            <h1>Mis citas</h1>
+            <p>Aquí puedes consultar tus próximas citas médicas registradas en el sistema.</p>
+        </section>
+
+        <div class="actions">
+            <a href="{{ url_for('paciente_auth.panel_paciente') }}" class="btn btn-secondary">Volver al panel</a>
+            <a href="{{ url_for('cita.agendar_cita') }}" class="btn btn-primary">Agendar nueva cita</a>
+        </div>
+    </div>
+
+    <section class="summary-grid">
+        <div class="summary-card card">
+            <h3>Total de citas próximas</h3>
+            <div class="summary-number">{{ "%02d"|format(total_proximas) }}</div>
+            <div class="summary-text">Número total de citas futuras registradas para tu atención médica.</div>
+        </div>
+
+        <div class="summary-card card">
+            <h3>Estado actual</h3>
+            <div class="summary-number">
+                {% if total_proximas > 0 %}OK{% else %}--{% endif %}
+            </div>
+            <div class="summary-text">
+                {% if total_proximas > 0 %}
+                    Tienes citas programadas y disponibles para consulta.
+                {% else %}
+                    No cuentas con citas próximas en este momento.
+                {% endif %}
+            </div>
+        </div>
+    </section>
+
+    <section class="list-card card">
+        <h2>Listado de próximas citas</h2>
+
+        {% if proximas_citas %}
+            <div class="citas-list">
+                {% for cita in proximas_citas %}
+                    <article class="cita-item">
+                        <div class="cita-top">
+                            <div class="cita-especialidad">{{ cita.especialidad }}</div>
+                            <div class="cita-badge">Próxima cita</div>
+                        </div>
+
+                        <div class="cita-info">
+                            <div><strong>Fecha:</strong> {{ cita.fecha }}</div>
+                            <div><strong>Hora:</strong> {{ cita.hora }}</div>
+                            <div><strong>Médico:</strong> Dr./Dra. {{ cita.doctor_nombre }} {{ cita.doctor_apellido }}</div>
+                            <div><strong>Motivo:</strong> {{ cita.motivo if cita.motivo else 'Sin motivo registrado' }}</div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                No tienes citas próximas registradas por el momento.  
+                Puedes regresar al panel o agendar una nueva cita cuando lo necesites.
+            </div>
+        {% endif %}
+    </section>
+
+</div>
+
+</body>
+</html>

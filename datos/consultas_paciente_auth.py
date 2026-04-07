@@ -48,18 +48,20 @@ def obtener_cuenta_paciente_por_id(id_cuenta_paciente):
             p.apellido_paterno,
             p.apellido_materno,
             p.correo,
-            p.numero_expediente
+            p.numero_expediente,
+            p.telefono,
+            p.sexo,
+            p.fecha_nacimiento
         FROM cuentas_paciente cp
         INNER JOIN pacientes p ON cp.id_paciente = p.id_paciente
         WHERE cp.id_cuenta_paciente = %s
         LIMIT 1
     """
+
     cursor.execute(query, (id_cuenta_paciente,))
     cuenta = cursor.fetchone()
-
     cursor.close()
     conexion.close()
-
     return cuenta
 
 
@@ -167,3 +169,81 @@ def obtener_resumen_citas_paciente(id_paciente):
     conexion.close()
 
     return resumen
+
+def obtener_historial_paciente(id_paciente):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    query = """
+        SELECT
+            c.id_cita,
+            c.folio,
+            DATE_FORMAT(c.fecha, '%d/%m/%Y') AS fecha,
+            TIME_FORMAT(c.hora, '%H:%i') AS hora,
+            c.motivo,
+            d.nombre AS doctor_nombre,
+            d.apellido_paterno AS doctor_apellido,
+            CASE
+                WHEN d.id_especialidad = 1 THEN 'Nutriología'
+                WHEN d.id_especialidad = 2 THEN 'Dermatología'
+                WHEN d.id_especialidad = 3 THEN 'Obstetricia'
+                WHEN d.id_especialidad = 4 THEN 'Psicología'
+                ELSE 'Sin especialidad'
+            END AS especialidad,
+            cm.id_consulta,
+            cm.diagnostico,
+            cm.tratamiento,
+            cm.observaciones
+        FROM consultas_medicas cm
+        INNER JOIN citas c ON cm.id_cita = c.id_cita
+        INNER JOIN doctores d ON c.id_doctor = d.id_doctor
+        WHERE c.id_paciente = %s
+        ORDER BY c.fecha DESC, c.hora DESC
+    """
+
+    cursor.execute(query, (id_paciente,))
+    historial = cursor.fetchall()
+
+    cursor.close()
+    conexion.close()
+    return historial
+
+def obtener_recetas_paciente(id_paciente):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    query = """
+        SELECT
+            c.id_cita,
+            c.folio,
+            DATE_FORMAT(c.fecha, '%d/%m/%Y') AS fecha,
+            TIME_FORMAT(c.hora, '%H:%i') AS hora,
+            c.motivo,
+            d.nombre AS doctor_nombre,
+            d.apellido_paterno AS doctor_apellido,
+            CASE
+                WHEN d.id_especialidad = 1 THEN 'Nutriología'
+                WHEN d.id_especialidad = 2 THEN 'Dermatología'
+                WHEN d.id_especialidad = 3 THEN 'Obstetricia'
+                WHEN d.id_especialidad = 4 THEN 'Psicología'
+                ELSE 'Sin especialidad'
+            END AS especialidad,
+            cm.id_consulta,
+            cm.diagnostico,
+            cm.tratamiento,
+            cm.observaciones
+        FROM consultas_medicas cm
+        INNER JOIN citas c ON cm.id_cita = c.id_cita
+        INNER JOIN doctores d ON c.id_doctor = d.id_doctor
+        WHERE c.id_paciente = %s
+          AND cm.tratamiento IS NOT NULL
+          AND TRIM(cm.tratamiento) <> ''
+        ORDER BY c.fecha DESC, c.hora DESC
+    """
+
+    cursor.execute(query, (id_paciente,))
+    recetas = cursor.fetchall()
+
+    cursor.close()
+    conexion.close()
+    return recetas

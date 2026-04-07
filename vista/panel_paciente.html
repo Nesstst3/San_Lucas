@@ -557,6 +557,275 @@
                 font-size:2.2rem;
             }
         }
+        .patient-calendar-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 24px;
+    padding: 1.25rem;
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+}
+
+.calendar-header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.calendar-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.calendar-subtitle {
+    margin: 0.35rem 0 0;
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.calendar-month-year {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+}
+
+.calendar-month {
+    font-weight: 700;
+    color: #2563eb;
+    font-size: 1rem;
+}
+
+.calendar-year {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.45rem;
+    margin-bottom: 0.7rem;
+}
+
+.calendar-weekday {
+    text-align: center;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax( 0, 1fr));
+    width: 100%;
+    gap: 0.45rem;
+}
+
+.calendar-day {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    margin: 0;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    position: relative;
+    transition: all 0.2s ease;
+    min-width: 0;
+}
+
+.calendar-day.empty {
+    visibility: hidden;
+}
+
+.calendar-day.is-today {
+    background: #3b82f6;
+    color: #ffffff;
+    border-color: #3b82f6;
+    box-shadow: 0 8px 18px rgba(59, 130, 246, 0.25);
+}
+
+.calendar-day.has-appointment:not(.is-today)::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+    position: absolute;
+    bottom: 4px;
+}
+
+.calendar-today-label {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 500;
+}
+.profile-actions{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:18px;
+}
+.profile-modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 9999;
+}
+
+.profile-modal-overlay.active{
+    display: flex;
+}
+
+.profile-modal{
+    width: 100%;
+    max-width: 760px;
+    background: rgba(255,255,255,.97);
+    border: 1px solid rgba(255,255,255,.75);
+    border-radius: 28px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+    overflow: hidden;
+    animation: modalFade .2s ease;
+}
+
+@keyframes modalFade{
+    from{
+        opacity: 0;
+        transform: translateY(10px) scale(.98);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.profile-modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:22px 24px;
+    background:linear-gradient(135deg,#3f8cf0,#2f78da);
+    color:#fff;
+}
+
+.profile-modal-title{
+    margin:0;
+    font-size:1.35rem;
+    font-weight:800;
+}
+
+.profile-modal-close{
+    border:none;
+    background:rgba(255,255,255,.14);
+    color:#fff;
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    font-size:1.2rem;
+    cursor:pointer;
+    font-weight:800;
+}
+
+.profile-modal-body{
+    padding:24px;
+}
+
+.profile-modal-top{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-bottom:22px;
+    padding:18px;
+    border-radius:22px;
+    background:linear-gradient(135deg,#f5f9ff,#eef4ff);
+    border:1px solid #dde8f7;
+}
+
+.profile-modal-avatar{
+    width:72px;
+    height:72px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#2f80ed,#4a86e8);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.6rem;
+    font-weight:800;
+    flex-shrink:0;
+}
+
+.profile-modal-name{
+    font-size:1.2rem;
+    font-weight:800;
+    color:#22355b;
+}
+
+.profile-modal-role{
+    color:#6b7280;
+    margin-top:4px;
+}
+
+.profile-modal-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:14px;
+}
+
+.profile-modal-item{
+    background:#fff;
+    border:1px solid #dde8f7;
+    border-radius:18px;
+    padding:16px;
+}
+
+.profile-modal-label{
+    font-size:.82rem;
+    font-weight:800;
+    color:#7a8aa1;
+    margin-bottom:6px;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+}
+
+.profile-modal-value{
+    color:#243447;
+    font-weight:600;
+    line-height:1.5;
+    word-break:break-word;
+}
+
+.profile-modal-actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:22px;
+}
+
+@media (max-width: 768px){
+    .profile-modal-grid{
+        grid-template-columns:1fr;
+    }
+
+    .profile-modal-top{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+}
     </style>
 </head>
 <body>
@@ -582,10 +851,10 @@
         <aside class="sidebar card-soft">
             <nav class="menu">
                 <a href="#" class="active">🏠 Inicio</a>
-                <a href="#">📅 Mis citas</a>
-                <a href="#">📄 Historial</a>
-                <a href="#">💊 Recetas</a>
-                <a href="#">👤 Mi perfil</a>
+               <a href="{{ url_for('paciente_auth.mis_citas_paciente') }}">📅 Mis citas</a>
+                <a href="{{ url_for('paciente_auth.historial_paciente') }}">📄 Historial</a>
+                <a href="{{ url_for('paciente_auth.recetas_paciente') }}">💊 Recetas</a>
+                <a href="javascript:void(0)" onclick="abrirModalPerfil()">👤 Mi perfil</a>
             </nav>
 
             <div class="sidebar-extra">
@@ -609,7 +878,7 @@
 <section class="next-cita-card card-soft">
     <div class="section-title">
         <h2>Próxima cita</h2>
-        <a href="#" class="section-link">Ver todas las citas</a>
+        <a href="{{ url_for('paciente_auth.mis_citas_paciente') }}" class="section-link">Ver todas las citas</a>
     </div>
 
     {% if proxima_cita %}
@@ -657,26 +926,52 @@
         <div class="mini-number">{{ "%02d"|format(total_proximas) }}</div>
         <div class="mini-desc">Próximas citas agendadas para seguimiento médico.</div>
     </div>
-    <a href="#" class="mini-btn">Gestionar</a>
+    <a href="{{ url_for('paciente_auth.mis_citas_paciente') }}" class="mini-btn">Gestionar</a>
 </div>
 
                 <div class="mini-card card-soft">
-                    <div>
-                        <h3>Historial reciente</h3>
-                        <div class="mini-number">01</div>
-                        <div class="mini-desc">Última nota o consulta registrada en tu historial.</div>
-                    </div>
-                    <a href="#" class="mini-btn secondary">Ver historial</a>
-                </div>
+    <div>
+        <h3>Historial reciente</h3>
+        <div class="mini-number">{{ "%02d"|format(total_historial) }}</div>
 
-                <div class="mini-card card-soft">
-                    <div>
-                        <h3>Recetas pendientes</h3>
-                        <div class="mini-number">01</div>
-                        <div class="mini-desc">Consulta las recetas o indicaciones compartidas por tu médico.</div>
-                    </div>
-                    <a href="#" class="mini-btn secondary">Ver recetas</a>
-                </div>
+        {% if ultima_consulta_historial %}
+            <div class="mini-desc">
+                Última consulta registrada en {{ ultima_consulta_historial.especialidad }}
+                el {{ ultima_consulta_historial.fecha }}.
+            </div>
+        {% else %}
+            <div class="mini-desc">
+                Aún no tienes consultas registradas en tu historial clínico.
+            </div>
+        {% endif %}
+    </div>
+
+    <a href="{{ url_for('paciente_auth.historial_paciente') }}" class="mini-btn secondary">
+        Ver historial
+    </a>
+</div>
+
+               <div class="mini-card card-soft">
+    <div>
+        <h3>Recetas registradas</h3>
+        <div class="mini-number">{{ "%02d"|format(total_recetas) }}</div>
+
+        {% if ultima_receta %}
+            <div class="mini-desc">
+                Última receta registrada en {{ ultima_receta.especialidad }}
+                el {{ ultima_receta.fecha }}.
+            </div>
+        {% else %}
+            <div class="mini-desc">
+                Aún no tienes recetas o tratamientos registrados en tu portal.
+            </div>
+        {% endif %}
+    </div>
+
+    <a href="{{ url_for('paciente_auth.recetas_paciente') }}" class="mini-btn secondary">
+        Ver recetas
+    </a>
+</div>
             </section>
 
             <section class="agenda-card card-soft">
@@ -690,7 +985,7 @@
 
             <div class="agenda-actions">
                 <a href="{{ url_for('cita.agendar_cita') }}" class="mini-btn">Agendar cita</a>
-                <a href="#" class="mini-btn secondary">Ver mis citas</a>
+                <a href="{{ url_for('paciente_auth.mis_citas_paciente') }}" class="mini-btn secondary">Ver mis citas</a>
             </div>
 
             <div style="margin-top:24px;">
@@ -723,45 +1018,46 @@
             </div>
         </div>
 
-        <div class="agenda-side">
-            <h4>Mi agenda</h4>
-            <div class="muted">Resumen rápido de próximas fechas</div>
+        <div class="patient-calendar-card">
+    <div class="calendar-header-top">
+        <div>
+            <h4 class="calendar-title">Mi agenda</h4>
+            <p class="calendar-subtitle">Resumen rápido de próximas fechas</p>
+        </div>
 
-            <div class="calendar-mini">
-                <div class="day-name">L</div>
-                <div class="day-name">M</div>
-                <div class="day-name">M</div>
-                <div class="day-name">J</div>
-                <div class="day-name">V</div>
-                <div class="day-name">S</div>
-                <div class="day-name">D</div>
-
-                <div class="day">11</div>
-                <div class="day">12</div>
-                <div class="day">13</div>
-                <div class="day">14</div>
-                <div class="day">15</div>
-                <div class="day">16</div>
-                <div class="day">17</div>
-
-                <div class="day">18</div>
-                <div class="day">19</div>
-                <div class="day">20</div>
-                <div class="day">21</div>
-                <div class="day">22</div>
-                <div class="day today">23</div>
-                <div class="day">24</div>
-
-                <div class="day">25</div>
-                <div class="day">26</div>
-                <div class="day">27</div>
-                <div class="day">28</div>
-                <div class="day">29</div>
-                <div class="day">30</div>
-                <div class="day">31</div>
-            </div>
+        <div class="calendar-month-year">
+            <span class="calendar-month">{{ calendario_paciente.mes }}</span>
+            <span class="calendar-year">{{ calendario_paciente.anio }}</span>
         </div>
     </div>
+
+    <div class="calendar-weekdays">
+        {% for dia_semana in calendario_paciente.dias_semana %}
+            <div class="calendar-weekday">{{ dia_semana }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="calendar-grid">
+        {% for semana in calendario_paciente.semanas %}
+            {% for dia in semana %}
+                {% if dia.numero %}
+                    <div class="calendar-day
+                        {% if dia.es_hoy %} is-today {% endif %}
+                        {% if dia.tiene_cita %} has-appointment {% endif %}
+                    ">
+                        <span>{{ dia.numero }}</span>
+                    </div>
+                {% else %}
+                    <div class="calendar-day empty"></div>
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+    <div class="calendar-today-label">
+        Hoy: {{ calendario_paciente.hoy }} de {{ calendario_paciente.mes }} de {{ calendario_paciente.anio }}
+    </div>
+</div>
 </section>
 
         </main>
@@ -782,10 +1078,19 @@
                 </div>
 
                 <div class="profile-list">
-                    <div class="profile-item">🗂️ Expediente: {{ cuenta.numero_expediente }}</div>
-                    <div class="profile-item">📧 {{ cuenta.correo }}</div>
-                    <div class="profile-item">🔐 Acceso activo a tu portal</div>
-                </div>
+    <div class="profile-item">🗂️ Expediente: {{ cuenta.numero_expediente }}</div>
+    <div class="profile-item">📧 {{ cuenta.correo }}</div>
+    <div class="profile-item">🔐 Acceso activo a tu portal</div>
+</div>
+
+<div class="profile-actions">
+    <a href="javascript:void(0)" onclick="abrirModalPerfil()" class="mini-btn" style="width:100%;">
+    Ver perfil completo
+</a>
+    <a href="{{ url_for('paciente_auth.cambiar_password_inicial') }}" class="mini-btn secondary" style="width:100%;">
+        Cambiar contraseña
+    </a>
+</div>
             </section>
 
             <section class="reco-card card-soft">
@@ -814,6 +1119,113 @@
 
     </div>
 </div>
+<div id="modalPerfil" class="profile-modal-overlay" onclick="cerrarModalPerfil(event)">
+    <div class="profile-modal">
+        <div class="profile-modal-header">
+            <h3 class="profile-modal-title">Mi perfil</h3>
+            <button type="button" class="profile-modal-close" onclick="cerrarModalPerfil()">×</button>
+        </div>
 
+        <div class="profile-modal-body">
+            <div class="profile-modal-top">
+                <div class="profile-modal-avatar">
+                    {{ cuenta.nombre[0] }}{{ cuenta.apellido_paterno[0] }}
+                </div>
+
+                <div>
+                    <div class="profile-modal-name">
+                        {{ cuenta.nombre }} {{ cuenta.apellido_paterno }}
+                        {% if cuenta.apellido_materno %}
+                            {{ cuenta.apellido_materno }}
+                        {% endif %}
+                    </div>
+                    <div class="profile-modal-role">Paciente con acceso activo al portal</div>
+                </div>
+            </div>
+
+            <div class="profile-modal-grid">
+                <div class="profile-modal-item">
+                    <div class="profile-modal-label">Expediente</div>
+                    <div class="profile-modal-value">{{ cuenta.numero_expediente }}</div>
+                </div>
+
+                <div class="profile-modal-item">
+                    <div class="profile-modal-label">Correo</div>
+                    <div class="profile-modal-value">{{ cuenta.correo }}</div>
+                </div>
+
+                <div class="profile-modal-item">
+                    <div class="profile-modal-label">Nombre</div>
+                    <div class="profile-modal-value">{{ cuenta.nombre }}</div>
+                </div>
+
+                <div class="profile-modal-item">
+                    <div class="profile-modal-label">Apellido paterno</div>
+                    <div class="profile-modal-value">{{ cuenta.apellido_paterno }}</div>
+                </div>
+
+                <div class="profile-modal-item">
+                    <div class="profile-modal-label">Apellido materno</div>
+                    <div class="profile-modal-value">
+                        {{ cuenta.apellido_materno if cuenta.apellido_materno else 'No registrado' }}
+                    </div>
+                </div>
+
+                <div class="profile-modal-item">
+                    <div class="profile-modal-label">Teléfono</div>
+                    <div class="profile-modal-value">
+                        {{ cuenta.telefono if cuenta.telefono else 'No registrado' }}
+                    </div>
+                </div>
+
+                <div class="profile-modal-item">
+                    <div class="profile-modal-label">Sexo</div>
+                    <div class="profile-modal-value">
+                        {{ cuenta.sexo if cuenta.sexo else 'No registrado' }}
+                    </div>
+                </div>
+
+                <div class="profile-modal-item">
+                    <div class="profile-modal-label">Fecha de nacimiento</div>
+                    <div class="profile-modal-value">
+                        {{ cuenta.fecha_nacimiento if cuenta.fecha_nacimiento else 'No registrada' }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-modal-actions">
+                <a href="{{ url_for('paciente_auth.cambiar_password_inicial') }}" class="mini-btn secondary">
+                    Cambiar contraseña
+                </a>
+
+                <a href="{{ url_for('paciente_auth.logout_paciente') }}" class="mini-btn secondary">
+                    Cerrar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function abrirModalPerfil() {
+        document.getElementById('modalPerfil').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModalPerfil(event) {
+        if (event && event.target && !event.target.classList.contains('profile-modal-overlay')) {
+            return;
+        }
+
+        document.getElementById('modalPerfil').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            document.getElementById('modalPerfil').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    });
+</script>
 </body>
 </html>
