@@ -1,7 +1,7 @@
 from datos.consultas_citas import obtener_doctores, registrar_cita_paciente_existente
 import calendar
-from datetime import date, datetime
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from datetime import date, datetime, timedelta
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from datos.consultas_paciente_auth import (
@@ -14,10 +14,31 @@ from datos.consultas_paciente_auth import (
     obtener_historial_paciente,
     obtener_recetas_paciente,
     actualizar_fecha_nacimiento_paciente,
-    cancelar_cita_paciente
+    cancelar_cita_paciente,
+    obtener_cita_paciente_por_id,
+    reagendar_cita_paciente,
+    obtener_horas_ocupadas_para_paciente
 )
 
 paciente_auth = Blueprint("paciente_auth", __name__)
+
+def generar_horarios_cita():
+    horarios = []
+    hora = 9
+    minuto = 0
+
+    while hora < 18:
+        horarios.append(f"{hora:02d}:{minuto:02d}")
+        minuto += 30
+
+        if minuto == 60:
+            minuto = 0
+            hora += 1
+
+    return horarios
+
+
+HORARIOS_CITA = generar_horarios_cita()
 
 MESES_ES = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -79,6 +100,55 @@ def construir_calendario_paciente(proximas_citas):
         "semanas": semanas
     }
 
+def enriquecer_estado_citas(citas):
+    hoy = date.today()
+    citas_enriquecidas = []
+
+    for cita in citas:
+        cita_nueva = dict(cita)
+        fecha_valor = cita.get("fecha")
+        fecha_obj = None
+
+        if isinstance(fecha_valor, datetime):
+            fecha_obj = fecha_valor.date()
+        elif isinstance(fecha_valor, date):
+            fecha_obj = fecha_valor
+        elif isinstance(fecha_valor, str):
+            formatos = ("%Y-%m-%d", "%d/%m/%Y", "%Y-%m-%d %H:%M:%S")
+            for formato in formatos:
+                try:
+                    fecha_obj = datetime.strptime(fecha_valor, formato).date()
+                    break
+                except ValueError:
+                    continue
+
+        cita_nueva["estado_cita"] = "Próxima"
+        cita_nueva["estado_clase"] = "upcoming"
+        cita_nueva["texto_estado"] = "Consulta próxima programada."
+
+        if fecha_obj:
+            dias = (fecha_obj - hoy).days
+
+            if dias == 0:
+                cita_nueva["estado_cita"] = "Hoy"
+                cita_nueva["estado_clase"] = "today"
+                cita_nueva["texto_estado"] = "Tu cita es hoy."
+            elif dias == 1:
+                cita_nueva["estado_cita"] = "Mañana"
+                cita_nueva["estado_clase"] = "tomorrow"
+                cita_nueva["texto_estado"] = "Tu cita es mañana."
+            elif dias > 1:
+                cita_nueva["estado_cita"] = "Próxima"
+                cita_nueva["estado_clase"] = "upcoming"
+                cita_nueva["texto_estado"] = f"Faltan {dias} días."
+            else:
+                cita_nueva["estado_cita"] = "Pendiente"
+                cita_nueva["estado_clase"] = "neutral"
+                cita_nueva["texto_estado"] = "Consulta registrada."
+
+        citas_enriquecidas.append(cita_nueva)
+
+    return citas_enriquecidas
 
 def paciente_logueado():
     return session.get("rol_paciente") == "paciente"
@@ -188,7 +258,8 @@ def panel_paciente():
     if int(cuenta["debe_cambiar_password"]) == 1:
         return redirect(url_for("paciente_auth.cambiar_password_inicial"))
 
-    proximas_citas = obtener_proximas_citas_paciente(cuenta["id_paciente"])
+    proximas_citas_raw = obtener_proximas_citas_paciente(cuenta["id_paciente"])
+    proximas_citas = enriquecer_estado_citas(proximas_citas_raw)
     resumen_citas = obtener_resumen_citas_paciente(cuenta["id_paciente"])
 
     historial_paciente = obtener_historial_paciente(cuenta["id_paciente"])
@@ -245,7 +316,8 @@ def mis_citas_paciente():
     if int(cuenta["debe_cambiar_password"]) == 1:
         return redirect(url_for("paciente_auth.cambiar_password_inicial"))
 
-    proximas_citas = obtener_proximas_citas_paciente(cuenta["id_paciente"])
+    proximas_citas_raw = obtener_proximas_citas_paciente(cuenta["id_paciente"])
+    proximas_citas = enriquecer_estado_citas(proximas_citas_raw)
     resumen_citas = obtener_resumen_citas_paciente(cuenta["id_paciente"])
     total_proximas = resumen_citas["total_proximas"] if resumen_citas else 0
 
@@ -380,12 +452,12 @@ def cancelar_cita_paciente_route(id_cita):
     if int(cuenta["debe_cambiar_password"]) == 1:
         return redirect(url_for("paciente_auth.cambiar_password_inicial"))
 
-    cancelada = cancelar_cita_paciente(id_cita, cuenta["id_paciente"])
+    cancelada, mensaje = cancelar_cita_paciente(id_cita, cuenta["id_paciente"])
 
     if not cancelada:
         return redirect(url_for(
             "paciente_auth.panel_paciente",
-            cita_error="1"
+            cita_error=mensaje
         ))
 
     return redirect(url_for(
@@ -406,6 +478,7 @@ def agendar_cita_paciente():
         return redirect(url_for("paciente_auth.login_paciente"))
 
     doctores = obtener_doctores()
+    fecha_minima = (date.today() + timedelta(days=1)).isoformat()
 
     if request.method == "POST":
         id_doctor = request.form.get("id_doctor")
@@ -419,7 +492,30 @@ def agendar_cita_paciente():
                 "agendar_cita_paciente.html",
                 cuenta=cuenta,
                 doctores=doctores,
-                fecha_hoy=date.today().isoformat()
+                fecha_minima=fecha_minima,
+                horarios_cita=HORARIOS_CITA
+            )
+
+        try:
+            fecha_obj = datetime.strptime(fecha, "%Y-%m-%d").date()
+        except ValueError:
+            flash("La fecha seleccionada no es válida.", "error")
+            return render_template(
+                "agendar_cita_paciente.html",
+                cuenta=cuenta,
+                doctores=doctores,
+                fecha_minima=fecha_minima,
+                horarios_cita=HORARIOS_CITA
+            )
+
+        if fecha_obj <= date.today():
+            flash("No puedes agendar una cita el mismo día. Selecciona una fecha posterior.", "error")
+            return render_template(
+                "agendar_cita_paciente.html",
+                cuenta=cuenta,
+                doctores=doctores,
+                fecha_minima=fecha_minima,
+                horarios_cita=HORARIOS_CITA
             )
 
         guardada, error_db = registrar_cita_paciente_existente(
@@ -436,7 +532,8 @@ def agendar_cita_paciente():
                 "agendar_cita_paciente.html",
                 cuenta=cuenta,
                 doctores=doctores,
-                fecha_hoy=date.today().isoformat()
+                fecha_minima=fecha_minima,
+                horarios_cita=HORARIOS_CITA
             )
 
         flash("La cita se agendó correctamente.", "success")
@@ -446,8 +543,125 @@ def agendar_cita_paciente():
         "agendar_cita_paciente.html",
         cuenta=cuenta,
         doctores=doctores,
-        fecha_hoy=date.today().isoformat()
+        fecha_minima=fecha_minima,
+        horarios_cita=HORARIOS_CITA
     )
+
+@paciente_auth.route("/paciente/reagendar-cita/<int:id_cita>", methods=["GET", "POST"])
+def reagendar_cita_paciente_route(id_cita):
+    if not paciente_logueado():
+        return redirect(url_for("paciente_auth.login_paciente"))
+
+    id_cuenta_paciente = session.get("id_cuenta_paciente")
+    cuenta = obtener_cuenta_paciente_por_id(id_cuenta_paciente)
+
+    if not cuenta:
+        session.clear()
+        return redirect(url_for("paciente_auth.login_paciente"))
+
+    if int(cuenta["debe_cambiar_password"]) == 1:
+        return redirect(url_for("paciente_auth.cambiar_password_inicial"))
+
+    cita = obtener_cita_paciente_por_id(id_cita, cuenta["id_paciente"])
+
+    if not cita:
+        flash("La cita no existe o no pertenece a tu cuenta.", "error")
+        return redirect(url_for("paciente_auth.mis_citas_paciente"))
+
+    doctores = obtener_doctores()
+
+    if request.method == "POST":
+        id_doctor = request.form.get("id_doctor")
+        fecha = request.form.get("fecha")
+        hora = request.form.get("hora")
+        motivo = request.form.get("motivo", "").strip()
+
+        if not id_doctor or not fecha or not hora or not motivo:
+            flash("Completa todos los campos para reagendar la cita.", "error")
+            return render_template(
+                "reagendar_cita_paciente.html",
+                cuenta=cuenta,
+                cita=cita,
+                doctores=doctores,
+                fecha_hoy=date.today().isoformat(),
+                horarios_cita=HORARIOS_CITA
+            )
+
+        try:
+            fecha_obj = datetime.strptime(fecha, "%Y-%m-%d").date()
+        except ValueError:
+            flash("La fecha no es válida.", "error")
+            return render_template(
+                "reagendar_cita_paciente.html",
+                cuenta=cuenta,
+                cita=cita,
+                doctores=doctores,
+                fecha_hoy=date.today().isoformat(),
+                horarios_cita=HORARIOS_CITA
+            )
+
+        if fecha_obj < date.today():
+            flash("No puedes reagendar una cita a una fecha pasada.", "error")
+            return render_template(
+                "reagendar_cita_paciente.html",
+                cuenta=cuenta,
+                cita=cita,
+                doctores=doctores,
+                fecha_hoy=date.today().isoformat(),
+                horarios_cita=HORARIOS_CITA
+            )
+
+        actualizada, error_db = reagendar_cita_paciente(
+            id_cita=id_cita,
+            id_paciente=cuenta["id_paciente"],
+            id_doctor=int(id_doctor),
+            fecha=fecha,
+            hora=hora,
+            motivo=motivo
+        )
+
+        if not actualizada:
+            flash(error_db or "No se pudo reagendar la cita.", "error")
+            cita = obtener_cita_paciente_por_id(id_cita, cuenta["id_paciente"])
+            return render_template(
+                "reagendar_cita_paciente.html",
+                cuenta=cuenta,
+                cita=cita,
+                doctores=doctores,
+                fecha_hoy=date.today().isoformat(),
+                horarios_cita=HORARIOS_CITA
+            )
+
+        flash("La cita se reagendó correctamente.", "success")
+        return redirect(url_for("paciente_auth.mis_citas_paciente"))
+
+    return render_template(
+        "reagendar_cita_paciente.html",
+        cuenta=cuenta,
+        cita=cita,
+        doctores=doctores,
+        fecha_hoy=date.today().isoformat(),
+        horarios_cita=HORARIOS_CITA
+    )
+
+@paciente_auth.route("/paciente/api/horas-ocupadas")
+def api_horas_ocupadas_paciente():
+    if not paciente_logueado():
+        return jsonify({"ok": False, "horas": []}), 401
+
+    id_doctor = request.args.get("id_doctor", type=int)
+    fecha = request.args.get("fecha", "").strip()
+    id_cita_excluir = request.args.get("id_cita_excluir", type=int)
+
+    if not id_doctor or not fecha:
+        return jsonify({"ok": False, "horas": []}), 400
+
+    horas = obtener_horas_ocupadas_para_paciente(id_doctor, fecha, id_cita_excluir)
+
+    return jsonify({
+        "ok": True,
+        "horas": horas
+    })
 
 @paciente_auth.route("/paciente/logout")
 def logout_paciente():

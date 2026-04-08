@@ -1,4 +1,5 @@
 from datos.conexion import obtener_conexion
+from datetime import datetime, time, timedelta
 
 
 def obtener_cuenta_paciente_por_usuario(usuario):
@@ -270,11 +271,109 @@ def actualizar_fecha_nacimiento_paciente(id_paciente, fecha_nacimiento):
 
 def cancelar_cita_paciente(id_cita, id_paciente):
     conexion = obtener_conexion()
-    cursor = conexion.cursor()
+    cursor = conexion.cursor(dictionary=True)
 
     try:
-        query = """
+        query_cita = """
+            SELECT id_cita, fecha, hora
+            FROM citas
+            WHERE id_cita = %s
+              AND id_paciente = %s
+            LIMIT 1
+        """
+        cursor.execute(query_cita, (id_cita, id_paciente))
+        cita = cursor.fetchone()
+
+        if not cita:
+            return False, "La cita no existe o no pertenece a tu cuenta."
+
+        fecha_cita = cita["fecha"]
+        hora_cita = cita["hora"]
+
+        if hasattr(hora_cita, "total_seconds"):
+            total_segundos = int(hora_cita.total_seconds())
+            horas = total_segundos // 3600
+            minutos = (total_segundos % 3600) // 60
+            hora_cita = time(horas, minutos)
+        elif isinstance(hora_cita, str):
+            hora_cita = datetime.strptime(hora_cita[:5], "%H:%M").time()
+
+        fecha_hora_cita = datetime.combine(fecha_cita, hora_cita)
+        ahora = datetime.now()
+
+        if fecha_hora_cita - ahora < timedelta(hours=24):
+            return False, "Solo puedes cancelar una cita con al menos 24 horas de anticipación."
+
+        query_delete = """
             DELETE FROM citas
+            WHERE id_cita = %s
+              AND id_paciente = %s
+        """
+        cursor.execute(query_delete, (id_cita, id_paciente))
+        conexion.commit()
+
+        if cursor.rowcount == 0:
+            return False, "No se pudo cancelar la cita."
+
+        return True, None
+
+    except Exception as e:
+        conexion.rollback()
+        print("Error al cancelar cita del paciente:", e)
+        return False, "Ocurrió un error al cancelar la cita."
+
+    finally:
+        cursor.close()
+        conexion.close()
+
+def obtener_cita_paciente_por_id(id_cita, id_paciente):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    query = """
+        SELECT
+            c.id_cita,
+            c.id_paciente,
+            c.id_doctor,
+            DATE_FORMAT(c.fecha, '%Y-%m-%d') AS fecha_form,
+            TIME_FORMAT(c.hora, '%H:%i') AS hora_form,
+            DATE_FORMAT(c.fecha, '%d/%m/%Y') AS fecha_mostrar,
+            TIME_FORMAT(c.hora, '%H:%i') AS hora_mostrar,
+            c.motivo,
+            d.nombre AS doctor_nombre,
+            d.apellido_paterno AS doctor_apellido,
+            CASE
+                WHEN d.id_especialidad = 1 THEN 'Nutriología'
+                WHEN d.id_especialidad = 2 THEN 'Dermatología'
+                WHEN d.id_especialidad = 3 THEN 'Obstetricia'
+                WHEN d.id_especialidad = 4 THEN 'Psicología'
+                ELSE 'Sin especialidad'
+            END AS especialidad
+        FROM citas c
+        INNER JOIN doctores d ON c.id_doctor = d.id_doctor
+        WHERE c.id_cita = %s
+          AND c.id_paciente = %s
+        LIMIT 1
+    """
+
+    cursor.execute(query, (id_cita, id_paciente))
+    cita = cursor.fetchone()
+
+    cursor.close()
+    conexion.close()
+    return cita
+
+
+def reagendar_cita_paciente(id_cita, id_paciente, id_doctor, fecha, hora, motivo):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor(dictionary=True)
+
+    try:
+        hora_normalizada = hora[:5]
+
+        query_valida = """
+            SELECT COUNT(*) AS total
+            FROM citas
             WHERE id_cita = %s
               AND id_paciente = %s
               AND (
@@ -282,13 +381,84 @@ def cancelar_cita_paciente(id_cita, id_paciente):
                     OR (fecha = CURDATE() AND hora >= CURTIME())
                   )
         """
-        cursor.execute(query, (id_cita, id_paciente))
+        cursor.execute(query_valida, (id_cita, id_paciente))
+        valida = cursor.fetchone()
+
+        if not valida or int(valida["total"]) == 0:
+            return False, "La cita ya no está disponible para reagendar."
+
+        query_conflicto = """
+            SELECT COUNT(*) AS total
+            FROM citas
+            WHERE id_doctor = %s
+              AND fecha = %s
+              AND TIME_FORMAT(hora, '%%H:%%i') = %s
+              AND id_cita <> %s
+        """
+        cursor.execute(query_conflicto, (id_doctor, fecha, hora_normalizada, id_cita))
+        conflicto = cursor.fetchone()
+
+        if conflicto and int(conflicto["total"]) > 0:
+            return False, "Ese horario ya no está disponible para el médico seleccionado."
+
+        query_update = """
+            UPDATE citas
+            SET id_doctor = %s,
+                fecha = %s,
+                hora = %s,
+                motivo = %s
+            WHERE id_cita = %s
+              AND id_paciente = %s
+        """
+        cursor.execute(query_update, (id_doctor, fecha, hora_normalizada, motivo, id_cita, id_paciente))
         conexion.commit()
-        return cursor.rowcount > 0
+
+        return True, None
+
     except Exception as e:
         conexion.rollback()
-        print("Error al cancelar cita del paciente:", e)
-        return False
+        print("Error al reagendar cita del paciente:", e)
+        return False, str(e)
+
+    finally:
+        cursor.close()
+        conexion.close()
+
+def obtener_horas_ocupadas_para_paciente(id_doctor, fecha, id_cita_excluir=None):
+    conexion = obtener_conexion()
+    cursor = conexion.cursor()
+
+    try:
+        query = """
+            SELECT TIME_FORMAT(hora, '%H:%i') AS hora
+            FROM citas
+            WHERE id_doctor = %s
+              AND fecha = %s
+        """
+        params = [id_doctor, fecha]
+
+        if id_cita_excluir:
+            query += " AND id_cita <> %s"
+            params.append(id_cita_excluir)
+
+        query += " ORDER BY hora"
+
+        cursor.execute(query, tuple(params))
+        resultados = cursor.fetchall()
+
+        horas = []
+        for fila in resultados:
+            if isinstance(fila, tuple):
+                horas.append(fila[0])
+            else:
+                horas.append(fila["hora"])
+
+        return horas
+
+    except Exception as e:
+        print("Error al obtener horas ocupadas:", e)
+        return []
+
     finally:
         cursor.close()
         conexion.close()

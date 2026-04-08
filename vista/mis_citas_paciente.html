@@ -248,6 +248,269 @@
                 align-items:stretch;
             }
         }
+
+        .cancel-modal-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10000;
+}
+
+.cancel-modal-overlay.active{
+    display: flex;
+}
+
+.cancel-modal{
+    width: 100%;
+    max-width: 520px;
+    background: rgba(255,255,255,.98);
+    border: 1px solid rgba(255,255,255,.75);
+    border-radius: 28px;
+    box-shadow: 0 24px 55px rgba(15, 23, 42, 0.20);
+    overflow: hidden;
+    animation: cancelModalFade .2s ease;
+}
+
+@keyframes cancelModalFade{
+    from{
+        opacity: 0;
+        transform: translateY(10px) scale(.98);
+    }
+    to{
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.cancel-modal-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:22px 24px;
+    background: linear-gradient(135deg,#3f8cf0,#2f78da);
+    color:#fff;
+}
+
+.cancel-modal-title{
+    margin:0;
+    font-size:1.25rem;
+    font-weight:800;
+}
+
+.cancel-modal-close{
+    border:none;
+    background:rgba(255,255,255,.14);
+    color:#fff;
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    font-size:1.2rem;
+    cursor:pointer;
+    font-weight:800;
+}
+
+.cancel-modal-body{
+    padding:24px;
+}
+
+.cancel-modal-icon{
+    width:64px;
+    height:64px;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.8rem;
+    background:#fff5f5;
+    color:#c0392b;
+    border:1px solid #f2c9c9;
+    margin-bottom:16px;
+}
+
+.cancel-modal-text{
+    margin:0;
+    color:#5f6f84;
+    line-height:1.7;
+    font-size:1rem;
+}
+
+.cancel-modal-highlight{
+    margin-top:16px;
+    padding:16px 18px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#fff8f8,#fff3f3);
+    border:1px solid #f6d0d0;
+    color:#9f2d2d;
+    font-weight:600;
+    line-height:1.6;
+}
+
+.cancel-modal-actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:22px;
+}
+
+.cancel-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    border:none;
+    cursor:pointer;
+    text-decoration:none;
+    padding:13px 20px;
+    border-radius:16px;
+    font-weight:800;
+    transition:.2s ease;
+}
+
+.cancel-btn-danger{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    color:#fff;
+    box-shadow:0 12px 22px rgba(220,38,38,.18);
+}
+
+.cancel-btn-danger:hover{
+    transform:translateY(-1px);
+}
+
+.cancel-btn-secondary{
+    background:#f6f9fd;
+    color:#51627c;
+    border:1px solid #dbe5f2;
+}
+.cancel-cita-info{
+    margin-top:16px;
+    padding:16px 18px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#f5f9ff,#eef4ff);
+    border:1px solid #dde8f7;
+}
+
+.cancel-cita-info-title{
+    font-size:.92rem;
+    font-weight:800;
+    color:#35537a;
+    margin-bottom:10px;
+}
+
+.cancel-cita-info-grid{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:10px 14px;
+}
+
+.cancel-cita-info-item{
+    background:#fff;
+    border:1px solid #e2ebf7;
+    border-radius:14px;
+    padding:12px 14px;
+}
+
+.cancel-cita-info-label{
+    font-size:.78rem;
+    font-weight:800;
+    color:#7a8aa1;
+    text-transform:uppercase;
+    margin-bottom:4px;
+    letter-spacing:.03em;
+}
+
+.cancel-cita-info-value{
+    color:#243447;
+    font-weight:700;
+    line-height:1.4;
+    word-break:break-word;
+}
+
+@media (max-width: 768px){
+    .cancel-cita-info-grid{
+        grid-template-columns:1fr;
+    }
+}
+.cita-actions{
+    margin-top: 14px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.cita-actions form{
+    margin: 0;
+}
+
+.btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    padding:12px 18px;
+    border-radius:16px;
+    font-weight:800;
+    border:none;
+    cursor:pointer;
+    transition:.2s ease;
+    font-size: 0.95rem;
+    line-height: 1;
+}
+
+.btn-secondary{
+    background:#f6f9fd;
+    color:#51627c;
+    border:1px solid #dbe5f2;
+}
+
+.btn-secondary:hover{
+    background:#eef4fb;
+}
+
+.btn-danger{
+    background:linear-gradient(135deg,#ef4444,#dc2626);
+    color:#fff;
+    border:none;
+    box-shadow:0 12px 22px rgba(220,38,38,.18);
+}
+
+.btn-danger:hover{
+    transform:translateY(-1px);
+}
+.cita-badge.today{
+    background:#e8f7ee;
+    color:#15803d;
+    border:1px solid #bbf7d0;
+}
+
+.cita-badge.tomorrow{
+    background:#fff7e6;
+    color:#b45309;
+    border:1px solid #fde68a;
+}
+
+.cita-badge.upcoming{
+    background:#e8f1ff;
+    color:#2f80ed;
+    border:1px solid #cfe0fb;
+}
+
+.cita-badge.neutral{
+    background:#f3f4f6;
+    color:#6b7280;
+    border:1px solid #e5e7eb;
+}
+
+.cita-status-text{
+    margin-top:12px;
+    color:#6b7280;
+    font-size:0.92rem;
+    font-weight:600;
+}
     </style>
 </head>
 <body>
@@ -273,7 +536,7 @@
 
         <div class="actions">
             <a href="{{ url_for('paciente_auth.panel_paciente') }}" class="btn btn-secondary">Volver al panel</a>
-            <a href="{{ url_for('cita.agendar_cita') }}" class="btn btn-primary">Agendar nueva cita</a>
+            <a href="{{ url_for('paciente_auth.agendar_cita_paciente') }}" class="btn btn-primary">Agendar nueva cita</a>
         </div>
     </div>
 
@@ -300,15 +563,43 @@
     </section>
 
     <section class="list-card card">
-        <h2>Listado de próximas citas</h2>
 
+        <h2>Listado de próximas citas</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="status-box {% if category == 'success' %}success{% else %}error{% endif %}" style="margin-bottom:18px; padding:14px 16px; border-radius:16px; font-weight:600; line-height:1.5; {% if category == 'success' %}background:#ecfdf3;color:#166534;border:1px solid #bbf7d0;{% else %}background:#fef2f2;color:#b91c1c;border:1px solid #fecaca;{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
         {% if proximas_citas %}
             <div class="citas-list">
                 {% for cita in proximas_citas %}
                     <article class="cita-item">
+   <div class="cita-actions">
+    <a href="{{ url_for('paciente_auth.reagendar_cita_paciente_route', id_cita=cita.id_cita) }}" class="btn btn-secondary">
+        Reagendar
+    </a>
+
+    <form
+        method="POST"
+        action="{{ url_for('paciente_auth.cancelar_cita_paciente_route', id_cita=cita.id_cita) }}"
+        onsubmit="return abrirModalCancelar(event, this)"
+        data-especialidad="{{ cita.especialidad }}"
+        data-fecha="{{ cita.fecha }}"
+        data-hora="{{ cita.hora }}"
+        data-medico="Dr./Dra. {{ cita.doctor_nombre }} {{ cita.doctor_apellido }}"
+    >
+        <button type="submit" class="btn btn-danger">
+            Cancelar cita
+        </button>
+    </form>
+</div>
                         <div class="cita-top">
                             <div class="cita-especialidad">{{ cita.especialidad }}</div>
-                            <div class="cita-badge">Próxima cita</div>
+                            <div class="cita-badge {{ cita.estado_clase }}">{{ cita.estado_cita }}</div>
                         </div>
 
                         <div class="cita-info">
@@ -317,6 +608,9 @@
                             <div><strong>Médico:</strong> Dr./Dra. {{ cita.doctor_nombre }} {{ cita.doctor_apellido }}</div>
                             <div><strong>Motivo:</strong> {{ cita.motivo if cita.motivo else 'Sin motivo registrado' }}</div>
                         </div>
+                        <div class="cita-status-text">
+    Estado: {{ cita.estado_cita }} · {{ cita.texto_estado }}
+</div>
                     </article>
                 {% endfor %}
             </div>
@@ -329,6 +623,105 @@
     </section>
 
 </div>
+<div id="modalCancelarCita" class="cancel-modal-overlay" onclick="cerrarModalCancelar(event)">
+    <div class="cancel-modal">
+        <div class="cancel-modal-header">
+            <h3 class="cancel-modal-title">Cancelar cita</h3>
+            <button type="button" class="cancel-modal-close" onclick="cerrarModalCancelar()">×</button>
+        </div>
 
+        <div class="cancel-modal-body">
+            <div class="cancel-modal-icon">🗑️</div>
+
+            <p class="cancel-modal-text">
+                ¿Estás seguro de que deseas cancelar esta cita?
+            </p>
+
+            <div class="cancel-modal-highlight">
+                Esta acción eliminará la cita programada del sistema.
+            </div>
+
+            <div class="cancel-cita-info">
+    <div class="cancel-cita-info-title">Cita seleccionada</div>
+
+    <div class="cancel-cita-info-grid">
+        <div class="cancel-cita-info-item">
+            <div class="cancel-cita-info-label">Especialidad</div>
+            <div id="cancelEspecialidad" class="cancel-cita-info-value">-</div>
+        </div>
+
+        <div class="cancel-cita-info-item">
+            <div class="cancel-cita-info-label">Fecha</div>
+            <div id="cancelFecha" class="cancel-cita-info-value">-</div>
+        </div>
+
+        <div class="cancel-cita-info-item">
+            <div class="cancel-cita-info-label">Hora</div>
+            <div id="cancelHora" class="cancel-cita-info-value">-</div>
+        </div>
+
+        <div class="cancel-cita-info-item">
+            <div class="cancel-cita-info-label">Médico</div>
+            <div id="cancelMedico" class="cancel-cita-info-value">-</div>
+        </div>
+    </div>
+</div>
+
+            <div class="cancel-modal-actions">
+                <button type="button" class="cancel-btn cancel-btn-danger" onclick="confirmarCancelacion()">
+                    Sí, cancelar cita
+                </button>
+
+                <button type="button" class="cancel-btn cancel-btn-secondary" onclick="cerrarModalCancelar()">
+                    No, volver
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    let formCancelarPendiente = null;
+
+    function abrirModalCancelar(event, form) {
+    event.preventDefault();
+    formCancelarPendiente = form;
+
+    document.getElementById('cancelEspecialidad').textContent = form.dataset.especialidad || '-';
+    document.getElementById('cancelFecha').textContent = form.dataset.fecha || '-';
+    document.getElementById('cancelHora').textContent = form.dataset.hora || '-';
+    document.getElementById('cancelMedico').textContent = form.dataset.medico || '-';
+
+    document.getElementById('modalCancelarCita').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    return false;
+}
+
+    function cerrarModalCancelar(event) {
+        if (event && event.target && !event.target.classList.contains('cancel-modal-overlay')) {
+            return;
+        }
+
+        document.getElementById('modalCancelarCita').classList.remove('active');
+        document.body.style.overflow = '';
+        formCancelarPendiente = null;
+    }
+
+    function confirmarCancelacion() {
+        if (formCancelarPendiente) {
+            formCancelarPendiente.submit();
+        }
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modalCancelar = document.getElementById('modalCancelarCita');
+            if (modalCancelar) {
+                modalCancelar.classList.remove('active');
+            }
+            document.body.style.overflow = '';
+            formCancelarPendiente = null;
+        }
+    });
+</script>
 </body>
 </html>

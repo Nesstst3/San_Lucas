@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Agendar nueva cita | Clínica San Lucas</title>
+    <title>Reagendar cita | Clínica San Lucas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -109,45 +109,17 @@
             top:18px;
         }
 
-        .patient-summary{
+        .summary-box{
             background:linear-gradient(135deg,#f5f9ff,#eef4ff);
             border:1px solid #dde8f7;
             border-radius:24px;
             padding:20px;
         }
 
-        .avatar{
-            width:74px;
-            height:74px;
-            border-radius:20px;
-            background:linear-gradient(135deg,#2f80ed,#4a86e8);
-            color:#fff;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:1.6rem;
-            font-weight:800;
-            margin-bottom:16px;
-            box-shadow:0 12px 22px rgba(47,128,237,.18);
-        }
-
-        .patient-name{
-            font-size:1.4rem;
-            font-weight:800;
+        .summary-box h3{
+            margin:0 0 14px;
+            font-size:1.2rem;
             color:#22355b;
-            margin-bottom:6px;
-            line-height:1.2;
-        }
-
-        .patient-role{
-            color:#66768d;
-            margin-bottom:16px;
-        }
-
-        .summary-list{
-            display:flex;
-            flex-direction:column;
-            gap:12px;
         }
 
         .summary-item{
@@ -155,6 +127,11 @@
             border:1px solid #e3ebf7;
             border-radius:18px;
             padding:14px 15px;
+            margin-bottom:12px;
+        }
+
+        .summary-item:last-child{
+            margin-bottom:0;
         }
 
         .summary-label{
@@ -171,26 +148,6 @@
             color:#243447;
             line-height:1.4;
             word-break:break-word;
-        }
-
-        .side-note{
-            margin-top:18px;
-            padding:18px;
-            border-radius:22px;
-            background:linear-gradient(180deg,#f5f9ff,#eef5ff);
-            border:1px solid #dbe7f7;
-        }
-
-        .side-note h3{
-            margin:0 0 10px;
-            font-size:1.1rem;
-            color:#22355b;
-        }
-
-        .side-note p{
-            margin:0;
-            color:#66768d;
-            line-height:1.7;
         }
 
         .main-card{
@@ -341,31 +298,10 @@
             box-shadow:0 12px 22px rgba(47,128,237,.18);
         }
 
-        .btn-primary:hover{
-            transform:translateY(-1px);
-        }
-
         .btn-secondary{
             background:#f6f9fd;
             color:#51627c;
             border:1px solid #dbe5f2;
-        }
-
-        .mini-badges{
-            display:flex;
-            gap:10px;
-            flex-wrap:wrap;
-            margin-top:16px;
-        }
-
-        .mini-badge{
-            background:#fff;
-            border:1px solid #dde8f7;
-            color:#4f6482;
-            border-radius:999px;
-            padding:8px 12px;
-            font-size:.86rem;
-            font-weight:700;
         }
 
         @media (max-width: 980px){
@@ -405,17 +341,6 @@
                 width:100%;
             }
         }
-
-        .occupied-note{
-    margin-top: 14px;
-    padding: 14px 16px;
-    border-radius: 16px;
-    background: #fff8e8;
-    border: 1px solid #fde7b0;
-    color: #9a6700;
-    font-weight: 600;
-    line-height: 1.5;
-}
     </style>
 </head>
 <body>
@@ -436,51 +361,36 @@
     <div class="layout">
 
         <aside class="side-card card">
-            <div class="patient-summary">
-                <div class="avatar">
-                    {{ cuenta.nombre[0] }}{{ cuenta.apellido_paterno[0] }}
+            <div class="summary-box">
+                <h3>Cita actual</h3>
+
+                <div class="summary-item">
+                    <div class="summary-label">Especialidad</div>
+                    <div class="summary-value">{{ cita.especialidad }}</div>
                 </div>
 
-                <div class="patient-name">
-                    {{ cuenta.nombre }} {{ cuenta.apellido_paterno }}
+                <div class="summary-item">
+                    <div class="summary-label">Médico actual</div>
+                    <div class="summary-value">Dr./Dra. {{ cita.doctor_nombre }} {{ cita.doctor_apellido }}</div>
                 </div>
 
-                <div class="patient-role">Paciente con acceso activo al portal</div>
-
-                <div class="summary-list">
-                    <div class="summary-item">
-                        <div class="summary-label">Expediente</div>
-                        <div class="summary-value">{{ cuenta.numero_expediente }}</div>
-                    </div>
-
-                    <div class="summary-item">
-                        <div class="summary-label">Correo</div>
-                        <div class="summary-value">{{ cuenta.correo }}</div>
-                    </div>
+                <div class="summary-item">
+                    <div class="summary-label">Fecha actual</div>
+                    <div class="summary-value">{{ cita.fecha_mostrar }}</div>
                 </div>
 
-                <div class="mini-badges">
-                    <div class="mini-badge">Nueva cita</div>
-                    <div class="mini-badge">Seguimiento médico</div>
+                <div class="summary-item">
+                    <div class="summary-label">Hora actual</div>
+                    <div class="summary-value">{{ cita.hora_mostrar }}</div>
                 </div>
-            </div>
-
-            <div class="side-note">
-                <h3>¿Qué vas a registrar aquí?</h3>
-                <p>
-                    Solo necesitas seleccionar el médico, la fecha, la hora y escribir
-                    el motivo de tu consulta. Tus datos personales ya están registrados
-                    en el sistema.
-                </p>
             </div>
         </aside>
 
         <main class="main-card card">
             <div class="hero">
-                <h1>Agendar nueva cita</h1>
+                <h1>Reagendar cita</h1>
                 <p>
-                    Programa una nueva consulta médica de forma rápida. Completa
-                    los datos de la cita y confirma tu solicitud.
+                    Actualiza el médico, la fecha, la hora o el motivo de tu consulta.
                 </p>
             </div>
 
@@ -496,8 +406,8 @@
 
             <div class="form-shell">
                 <div class="form-title">
-                    <h2>Datos de la cita</h2>
-                    <span>Completa los campos requeridos</span>
+                    <h2>Nuevos datos de la cita</h2>
+                    <span>Actualiza la información necesaria</span>
                 </div>
 
                 <form method="POST">
@@ -509,12 +419,15 @@
                                 <option value="">Selecciona un médico</option>
                                 {% for doctor in doctores %}
                                     <option value="{{ doctor.id_doctor }}"
-                                        {% if request.form.get('id_doctor') == doctor.id_doctor|string %}selected{% endif %}>
+                                        {% if request.form.get('id_doctor') %}
+                                            {% if request.form.get('id_doctor') == doctor.id_doctor|string %}selected{% endif %}
+                                        {% else %}
+                                            {% if cita.id_doctor == doctor.id_doctor %}selected{% endif %}
+                                        {% endif %}>
                                         Dr./Dra. {{ doctor.nombre }} {{ doctor.apellido_paterno }}
                                     </option>
                                 {% endfor %}
                             </select>
-                            <div class="field-hint">Selecciona al profesional que atenderá tu consulta.</div>
                         </div>
 
                         <div class="field">
@@ -523,11 +436,10 @@
                                 type="date"
                                 name="fecha"
                                 id="fecha"
-                                min="{{ fecha_minima }}"
-                                value="{{ request.form.get('fecha', '') }}"
+                                min="{{ fecha_hoy }}"
+                                value="{{ request.form.get('fecha', cita.fecha_form) }}"
                                 required
                             >
-                            <div class="field-hint">Elige una fecha disponible para tu atención.</div>
                         </div>
 
                         <div class="field">
@@ -536,12 +448,16 @@
         <option value="">Selecciona una hora</option>
         {% for hora_item in horarios_cita %}
             <option value="{{ hora_item }}"
-                {% if request.form.get('hora') == hora_item %}selected{% endif %}>
+                {% if request.form.get('hora') %}
+                    {% if request.form.get('hora') == hora_item %}selected{% endif %}
+                {% else %}
+                    {% if cita.hora_form == hora_item %}selected{% endif %}
+                {% endif %}>
                 {{ hora_item }}
             </option>
         {% endfor %}
     </select>
-    <div class="field-hint" id="horasInfoAgendar">
+    <div class="field-hint" id="horasInfoReagendar">
         Selecciona un médico y una fecha para consultar la disponibilidad.
     </div>
 </div>
@@ -553,17 +469,17 @@
                                 id="motivo"
                                 placeholder="Describe brevemente el motivo de tu consulta..."
                                 required
-                            >{{ request.form.get('motivo', '') }}</textarea>
+                            >{{ request.form.get('motivo', cita.motivo) }}</textarea>
                             <div class="field-hint">
-                                Escribe el motivo principal de tu consulta para facilitar la atención médica.
+                                Puedes ajustar el motivo si cambió la razón principal de tu consulta.
                             </div>
                         </div>
 
                     </div>
 
                     <div class="actions">
-                        <button type="submit" class="btn btn-primary">Guardar cita</button>
-                        <a href="{{ url_for('paciente_auth.panel_paciente') }}" class="btn btn-secondary">Cancelar</a>
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        <a href="{{ url_for('paciente_auth.mis_citas_paciente') }}" class="btn btn-secondary">Cancelar</a>
                     </div>
                 </form>
             </div>
@@ -572,11 +488,12 @@
     </div>
 </div>
 <script>
-    async function actualizarHorasAgendar() {
+    async function actualizarHorasReagendar() {
         const doctor = document.getElementById("id_doctor").value;
         const fecha = document.getElementById("fecha").value;
         const horaSelect = document.getElementById("hora");
-        const info = document.getElementById("horasInfoAgendar");
+        const info = document.getElementById("horasInfoReagendar");
+        const idCita = "{{ cita.id_cita }}";
 
         Array.from(horaSelect.options).forEach((option, index) => {
             if (index !== 0) {
@@ -592,7 +509,7 @@
         }
 
         try {
-            const response = await fetch(`{{ url_for('paciente_auth.api_horas_ocupadas_paciente') }}?id_doctor=${doctor}&fecha=${fecha}`);
+            const response = await fetch(`{{ url_for('paciente_auth.api_horas_ocupadas_paciente') }}?id_doctor=${doctor}&fecha=${fecha}&id_cita_excluir=${idCita}`);
             const data = await response.json();
 
             if (!data.ok) {
@@ -624,11 +541,11 @@
         }
     }
 
-    document.getElementById("id_doctor").addEventListener("change", actualizarHorasAgendar);
-    document.getElementById("fecha").addEventListener("change", actualizarHorasAgendar);
+    document.getElementById("id_doctor").addEventListener("change", actualizarHorasReagendar);
+    document.getElementById("fecha").addEventListener("change", actualizarHorasReagendar);
 
     document.addEventListener("DOMContentLoaded", function () {
-        actualizarHorasAgendar();
+        actualizarHorasReagendar();
     });
 </script>
 </body>
