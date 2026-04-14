@@ -1,7 +1,7 @@
 import os
-from datetime import timedelta  # <--  Para contar el tiempo de la sesion
+from datetime import timedelta  # <--  Para contar el tiempo de la sesion.
 from dotenv import load_dotenv
-from flask import Flask, session  # <-- Se Agrego 'session' a la importación
+from flask import Flask, session  # <-- Se Agrego 'session' a la importación.
 
 from contenedores.home_controller import home
 from contenedores.cita_controller import cita
