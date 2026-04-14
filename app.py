@@ -37,8 +37,9 @@ def make_session_permanent():
 @app.after_request
 def add_header(response):
     """
-    Le prohíbe al navegador guardar el expediente en la memoria caché.
-    Si el doctor cierra sesión y le da "Atrás", le pedirá login otra vez.
+    Le prohíbe al navegador guardar información sensible en la memoria caché.
+    Si el USUARIO (Médico o Paciente) cierra sesión y le da "Atrás", 
+    el sistema lo obligará a iniciar sesión otra vez por seguridad.
     """
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
     response.headers['Pragma'] = 'no-cache'
