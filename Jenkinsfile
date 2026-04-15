@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build Docker') {
             steps {
-                sh 'docker build -t san_lucas ./contenedores'
+               sh 'docker build -t san_lucas -f contenedores/Dockerfile .'
             }
         }
 
