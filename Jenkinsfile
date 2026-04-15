@@ -2,21 +2,26 @@ pipeline {
     agent any
 
     stages {
-        stage('Clonar repo') {
+        stage('Build Docker') {
             steps {
-               git branch: 'main', url: 'https://github.com/Nesstst3/San_Lucas.git'
+                sh 'docker build -t san_lucas .'
             }
         }
 
-        stage('Ver archivos') {
+        stage('Stop container') {
             steps {
-                sh 'ls -la'
+                sh 'docker stop sanlucas_app || true'
+                sh 'docker rm sanlucas_app || true'
             }
         }
 
-        stage('Probar Docker') {
+        stage('Run container') {
             steps {
-                sh 'docker ps'
+                sh '''
+                docker run -d -p 5000:5000 \
+                --name sanlucas_app \
+                san_lucas
+                '''
             }
         }
     }
