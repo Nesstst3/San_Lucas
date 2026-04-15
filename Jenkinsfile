@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clonar repo') {
             steps {
-                git 'https://github.com/casillpaulina150/San_Lucas.git'
+               git branch: 'main', url: 'https://github.com/Nesstst3/San_Lucas.git'
             }
         }
 
